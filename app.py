@@ -346,27 +346,122 @@ def build_bornier_svg():
 
 
 def build_nomenclature_svg():
-    return """
-    <svg width="1200" height="700" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff">
-      <rect x="20" y="20" width="1160" height="660" fill="none" stroke="#222" stroke-width="1.5"/>
+    return (
+        '<svg width="1200" height="700" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff">'
+        '<rect x="20" y="20" width="1160" height="660" fill="none" stroke="#222" stroke-width="1.5"/>'
 
-      <text x="40" y="45" font-size="18" fill="#111">COFFRET TYPE FROID MONO-VENTIL</text>
-      <text x="40" y="95" font-size="18" fill="#111">Nomenclature simplifiée</text>
+        '<text x="40" y="45" font-size="18" fill="#111">COFFRET TYPE FROID MONO-VENTIL</text>'
+        '<text x="40" y="95" font-size="18" fill="#111">Nomenclature simplifiée</text>'
 
-      <g stroke="#d0d0d0" stroke-width="1" stroke-dasharray="4 4">
-        <line x1="80" y1="80" x2="80" y2="620"/>
-        <line x1="200" y1="80" x2="200" y2="620"/>
-        <line x1="320" y1="80" x2="320" y2="620"/>
-        <line x1="440" y1="80" x2="440" y2="620"/>
-        <line x1="560" y1="80" x2="560" y2="620"/>
-        <line x1="680" y1="80" x2="680" y2="620"/>
-        <line x1="800" y1="80" x2="800" y2="620"/>
-        <line x1="920" y1="80" x2="920" y2="620"/>
-        <line x1="1040" y1="80" x2="1040" y2="620"/>
-      </g>
+        '<g stroke="#d0d0d0" stroke-width="1" stroke-dasharray="4 4">'
+        '<line x1="80" y1="80" x2="80" y2="620"/>'
+        '<line x1="200" y1="80" x2="200" y2="620"/>'
+        '<line x1="320" y1="80" x2="320" y2="620"/>'
+        '<line x1="440" y1="80" x2="440" y2="620"/>'
+        '<line x1="560" y1="80" x2="560" y2="620"/>'
+        '<line x1="680" y1="80" x2="680" y2="620"/>'
+        '<line x1="800" y1="80" x2="800" y2="620"/>'
+        '<line x1="920" y1="80" x2="920" y2="620"/>'
+        '<line x1="1040" y1="80" x2="1040" y2="620"/>'
+        '</g>'
 
-      <rect x="80" y="150" width="950" height="30" fill="none" stroke="#111" stroke-width="1.5"/>
-      <line x1="180" y1="150" x2="180" y2="180" stroke="#111" stroke-width="1.5"/>
-      <line x1="820" y1="150" x2="820" y2="180" stroke="#111" stroke-width="1.5"/>
-      <text x="95" y="170" font-size="12" fill="#111">Repère</text>
-      <text x="230" y="170" font-size="12"
+        '<rect x="80" y="150" width="950" height="30" fill="none" stroke="#111" stroke-width="1.5"/>'
+        '<line x1="180" y1="150" x2="180" y2="180" stroke="#111" stroke-width="1.5"/>'
+        '<line x1="820" y1="150" x2="820" y2="180" stroke="#111" stroke-width="1.5"/>'
+        '<text x="95" y="170" font-size="12" fill="#111">Repère</text>'
+        '<text x="230" y="170" font-size="12" fill="#111">Désignation</text>'
+        '<text x="875" y="170" font-size="12" fill="#111">Qté</text>'
+
+        '<rect x="80" y="190" width="950" height="24" fill="none" stroke="#111"/>'
+        '<line x1="180" y1="190" x2="180" y2="214" stroke="#111"/>'
+        '<line x1="820" y1="190" x2="820" y2="214" stroke="#111"/>'
+        '<text x="100" y="207" font-size="11" fill="#111">IG1</text>'
+        '<text x="200" y="207" font-size="11" fill="#111">Interrupteur général</text>'
+        '<text x="885" y="207" font-size="11" fill="#111">1</text>'
+
+        '<rect x="80" y="216" width="950" height="24" fill="none" stroke="#111"/>'
+        '<line x1="180" y1="216" x2="180" y2="240" stroke="#111"/>'
+        '<line x1="820" y1="216" x2="820" y2="240" stroke="#111"/>'
+        '<text x="100" y="233" font-size="11" fill="#111">Q1</text>'
+        '<text x="200" y="233" font-size="11" fill="#111">Protection générale</text>'
+        '<text x="885" y="233" font-size="11" fill="#111">1</text>'
+
+        '<rect x="80" y="242" width="950" height="24" fill="none" stroke="#111"/>'
+        '<line x1="180" y1="242" x2="180" y2="266" stroke="#111"/>'
+        '<line x1="820" y1="242" x2="820" y2="266" stroke="#111"/>'
+        '<text x="100" y="259" font-size="11" fill="#111">DM1</text>'
+        '<text x="200" y="259" font-size="11" fill="#111">Protection moteur pompe</text>'
+        '<text x="885" y="259" font-size="11" fill="#111">1</text>'
+
+        '<rect x="80" y="268" width="950" height="24" fill="none" stroke="#111"/>'
+        '<line x1="180" y1="268" x2="180" y2="292" stroke="#111"/>'
+        '<line x1="820" y1="268" x2="820" y2="292" stroke="#111"/>'
+        '<text x="100" y="285" font-size="11" fill="#111">QF</text>'
+        '<text x="200" y="285" font-size="11" fill="#111">Protection ventilation</text>'
+        '<text x="885" y="285" font-size="11" fill="#111">1</text>'
+
+        '<rect x="80" y="294" width="950" height="24" fill="none" stroke="#111"/>'
+        '<line x1="180" y1="294" x2="180" y2="318" stroke="#111"/>'
+        '<line x1="820" y1="294" x2="820" y2="318" stroke="#111"/>'
+        '<text x="100" y="311" font-size="11" fill="#111">KM1</text>'
+        '<text x="200" y="311" font-size="11" fill="#111">Contacteur pompe</text>'
+        '<text x="885" y="311" font-size="11" fill="#111">1</text>'
+
+        '<rect x="80" y="320" width="950" height="24" fill="none" stroke="#111"/>'
+        '<line x1="180" y1="320" x2="180" y2="344" stroke="#111"/>'
+        '<line x1="820" y1="320" x2="820" y2="344" stroke="#111"/>'
+        '<text x="100" y="337" font-size="11" fill="#111">KV1</text>'
+        '<text x="200" y="337" font-size="11" fill="#111">Relais ventilation</text>'
+        '<text x="885" y="337" font-size="11" fill="#111">1</text>'
+
+        '<rect x="80" y="346" width="950" height="24" fill="none" stroke="#111"/>'
+        '<line x1="180" y1="346" x2="180" y2="370" stroke="#111"/>'
+        '<line x1="820" y1="346" x2="820" y2="370" stroke="#111"/>'
+        '<text x="100" y="363" font-size="11" fill="#111">T1</text>'
+        '<text x="200" y="363" font-size="11" fill="#111">Transformateur alimentation commande</text>'
+        '<text x="885" y="363" font-size="11" fill="#111">1</text>'
+
+        '<rect x="80" y="372" width="950" height="24" fill="none" stroke="#111"/>'
+        '<line x1="180" y1="372" x2="180" y2="396" stroke="#111"/>'
+        '<line x1="820" y1="372" x2="820" y2="396" stroke="#111"/>'
+        '<text x="100" y="389" font-size="11" fill="#111">A1</text>'
+        '<text x="200" y="389" font-size="11" fill="#111">Régulateur MPX PRO</text>'
+        '<text x="885" y="389" font-size="11" fill="#111">1</text>'
+
+        '<rect x="80" y="398" width="950" height="24" fill="none" stroke="#111"/>'
+        '<line x1="180" y1="398" x2="180" y2="422" stroke="#111"/>'
+        '<line x1="820" y1="398" x2="820" y2="422" stroke="#111"/>'
+        '<text x="100" y="415" font-size="11" fill="#111">X1</text>'
+        '<text x="200" y="415" font-size="11" fill="#111">Bornier extérieur</text>'
+        '<text x="885" y="415" font-size="11" fill="#111">1</text>'
+
+        '<rect x="80" y="424" width="950" height="24" fill="none" stroke="#111"/>'
+        '<line x1="180" y1="424" x2="180" y2="448" stroke="#111"/>'
+        '<line x1="820" y1="424" x2="820" y2="448" stroke="#111"/>'
+        '<text x="100" y="441" font-size="11" fill="#111">YV1</text>'
+        '<text x="200" y="441" font-size="11" fill="#111">Actionneur vanne 3 voies 0-10V</text>'
+        '<text x="885" y="441" font-size="11" fill="#111">1</text>'
+
+        '<rect x="80" y="450" width="950" height="24" fill="none" stroke="#111"/>'
+        '<line x1="180" y1="450" x2="180" y2="474" stroke="#111"/>'
+        '<line x1="820" y1="450" x2="820" y2="474" stroke="#111"/>'
+        '<text x="100" y="467" font-size="11" fill="#111">TT1</text>'
+        '<text x="200" y="467" font-size="11" fill="#111">Sonde entrée batterie</text>'
+        '<text x="885" y="467" font-size="11" fill="#111">1</text>'
+
+        '<rect x="80" y="476" width="950" height="24" fill="none" stroke="#111"/>'
+        '<line x1="180" y1="476" x2="180" y2="500" stroke="#111"/>'
+        '<line x1="820" y1="476" x2="820" y2="500" stroke="#111"/>'
+        '<text x="100" y="493" font-size="11" fill="#111">TT2</text>'
+        '<text x="200" y="493" font-size="11" fill="#111">Sonde reprise</text>'
+        '<text x="885" y="493" font-size="11" fill="#111">1</text>'
+
+        '<rect x="20" y="640" width="1160" height="30" fill="none" stroke="#222" stroke-width="1.5"/>'
+        '<line x1="1000" y1="640" x2="1000" y2="670" stroke="#222" stroke-width="1.5"/>'
+        '<line x1="1090" y1="640" x2="1090" y2="670" stroke="#222" stroke-width="1.5"/>'
+        '<text x="30" y="660" font-size="12" fill="#111">Nomenclature simplifiée</text>'
+        '<text x="1015" y="660" font-size="12" fill="#111">Folio</text>'
+        '<text x="1115" y="660" font-size="12" fill="#111">13</text>'
+
+        '</svg>'
+    )
