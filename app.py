@@ -11,6 +11,7 @@ texte = st.text_area(
     height=180,
 )
 
+
 def svg_power():
     return (
         '<svg width="1000" height="560" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff">'
@@ -18,6 +19,7 @@ def svg_power():
 
         '<text x="40" y="45" font-size="20" fill="#111">Folio puissance</text>'
         '<text x="60" y="85" font-size="12" fill="#111">COFFRET TYPE FROID MONO-VENTIL</text>'
+        '<text x="780" y="85" font-size="12" fill="#111">Schéma de puissance</text>'
 
         '<g stroke="#d0d0d0" stroke-width="1" stroke-dasharray="4 4">'
         '<line x1="80" y1="90" x2="80" y2="480"/>'
@@ -35,68 +37,72 @@ def svg_power():
         '<line x1="40" y1="420" x2="940" y2="420"/>'
         '</g>'
 
-        '<text x="70" y="110" font-size="11" fill="#111">L1</text>'
-        '<text x="90" y="110" font-size="11" fill="#111">L2</text>'
-        '<text x="110" y="110" font-size="11" fill="#111">L3</text>'
+        '<text x="90" y="110" font-size="11" fill="#111">L1</text>'
+        '<text x="110" y="110" font-size="11" fill="#111">L2</text>'
+        '<text x="130" y="110" font-size="11" fill="#111">L3</text>'
 
-        '<line x1="80" y1="130" x2="80" y2="430" stroke="#111" stroke-width="2"/>'
         '<line x1="100" y1="130" x2="100" y2="430" stroke="#111" stroke-width="2"/>'
         '<line x1="120" y1="130" x2="120" y2="430" stroke="#111" stroke-width="2"/>'
+        '<line x1="140" y1="130" x2="140" y2="430" stroke="#111" stroke-width="2"/>'
 
-        '<line x1="76" y1="145" x2="84" y2="155" stroke="#111" stroke-width="1.4"/>'
         '<line x1="96" y1="145" x2="104" y2="155" stroke="#111" stroke-width="1.4"/>'
         '<line x1="116" y1="145" x2="124" y2="155" stroke="#111" stroke-width="1.4"/>'
-        '<text x="135" y="156" font-size="12" fill="#111">IG1</text>'
+        '<line x1="136" y1="145" x2="144" y2="155" stroke="#111" stroke-width="1.4"/>'
+        '<text x="155" y="156" font-size="12" fill="#111">IG1</text>'
 
-        '<line x1="76" y1="190" x2="84" y2="200" stroke="#111" stroke-width="1.4"/>'
         '<line x1="96" y1="190" x2="104" y2="200" stroke="#111" stroke-width="1.4"/>'
         '<line x1="116" y1="190" x2="124" y2="200" stroke="#111" stroke-width="1.4"/>'
-        '<text x="135" y="201" font-size="12" fill="#111">Q1</text>'
+        '<line x1="136" y1="190" x2="144" y2="200" stroke="#111" stroke-width="1.4"/>'
+        '<text x="155" y="201" font-size="12" fill="#111">Q1</text>'
 
-        '<line x1="76" y1="235" x2="84" y2="245" stroke="#111" stroke-width="1.4"/>'
         '<line x1="96" y1="235" x2="104" y2="245" stroke="#111" stroke-width="1.4"/>'
         '<line x1="116" y1="235" x2="124" y2="245" stroke="#111" stroke-width="1.4"/>'
-        '<text x="135" y="246" font-size="12" fill="#111">DM1</text>'
+        '<line x1="136" y1="235" x2="144" y2="245" stroke="#111" stroke-width="1.4"/>'
+        '<text x="155" y="246" font-size="12" fill="#111">DM1</text>'
 
-        '<line x1="76" y1="280" x2="84" y2="290" stroke="#111" stroke-width="1.4"/>'
         '<line x1="96" y1="280" x2="104" y2="290" stroke="#111" stroke-width="1.4"/>'
         '<line x1="116" y1="280" x2="124" y2="290" stroke="#111" stroke-width="1.4"/>'
-        '<text x="135" y="291" font-size="12" fill="#111">KM1</text>'
+        '<line x1="136" y1="280" x2="144" y2="290" stroke="#111" stroke-width="1.4"/>'
+        '<text x="155" y="291" font-size="12" fill="#111">KM1</text>'
 
-        '<circle cx="100" cy="390" r="18" fill="none" stroke="#111" stroke-width="1.5"/>'
-        '<text x="94" y="395" font-size="12" fill="#111">M</text>'
-        '<text x="135" y="395" font-size="12" fill="#111">M1 Pompe</text>'
+        '<circle cx="120" cy="390" r="18" fill="none" stroke="#111" stroke-width="1.5"/>'
+        '<text x="114" y="395" font-size="12" fill="#111">M</text>'
+        '<text x="155" y="395" font-size="12" fill="#111">M1 Pompe</text>'
 
-        '<text x="250" y="110" font-size="11" fill="#111">L1</text>'
-        '<text x="270" y="110" font-size="11" fill="#111">L2</text>'
-        '<text x="290" y="110" font-size="11" fill="#111">L3</text>'
+        '<text x="270" y="110" font-size="11" fill="#111">L1</text>'
+        '<text x="290" y="110" font-size="11" fill="#111">L2</text>'
+        '<text x="310" y="110" font-size="11" fill="#111">L3</text>'
 
-        '<line x1="260" y1="130" x2="260" y2="430" stroke="#111" stroke-width="2"/>'
         '<line x1="280" y1="130" x2="280" y2="430" stroke="#111" stroke-width="2"/>'
         '<line x1="300" y1="130" x2="300" y2="430" stroke="#111" stroke-width="2"/>'
+        '<line x1="320" y1="130" x2="320" y2="430" stroke="#111" stroke-width="2"/>'
 
-        '<line x1="256" y1="190" x2="264" y2="200" stroke="#111" stroke-width="1.4"/>'
         '<line x1="276" y1="190" x2="284" y2="200" stroke="#111" stroke-width="1.4"/>'
         '<line x1="296" y1="190" x2="304" y2="200" stroke="#111" stroke-width="1.4"/>'
-        '<text x="315" y="201" font-size="12" fill="#111">QF Vent</text>'
+        '<line x1="316" y1="190" x2="324" y2="200" stroke="#111" stroke-width="1.4"/>'
+        '<text x="335" y="201" font-size="12" fill="#111">Q2</text>'
 
-        '<circle cx="280" cy="390" r="18" fill="none" stroke="#111" stroke-width="1.5"/>'
-        '<text x="274" y="395" font-size="12" fill="#111">M</text>'
-        '<text x="315" y="395" font-size="12" fill="#111">M2 Ventilation</text>'
+        '<circle cx="300" cy="390" r="18" fill="none" stroke="#111" stroke-width="1.5"/>'
+        '<text x="294" y="395" font-size="12" fill="#111">M</text>'
+        '<text x="335" y="395" font-size="12" fill="#111">M2 Ventilation</text>'
 
-        '<text x="475" y="110" font-size="11" fill="#111">230V / 24V</text>'
-        '<line x1="500" y1="130" x2="500" y2="155" stroke="#111" stroke-width="1.5"/>'
-        '<circle cx="492" cy="170" r="8" fill="none" stroke="#111" stroke-width="1.5"/>'
-        '<circle cx="508" cy="170" r="8" fill="none" stroke="#111" stroke-width="1.5"/>'
-        '<text x="522" y="174" font-size="12" fill="#111">T1</text>'
+        '<text x="495" y="110" font-size="11" fill="#111">230V / 24V</text>'
+        '<line x1="520" y1="130" x2="520" y2="155" stroke="#111" stroke-width="1.5"/>'
+        '<circle cx="512" cy="170" r="8" fill="none" stroke="#111" stroke-width="1.5"/>'
+        '<circle cx="528" cy="170" r="8" fill="none" stroke="#111" stroke-width="1.5"/>'
+        '<text x="542" y="174" font-size="12" fill="#111">T1</text>'
 
-        '<rect x="760" y="155" width="24" height="18" fill="none" stroke="#111" stroke-width="1.3"/>'
-        '<text x="745" y="150" font-size="11" fill="#111">PS1</text>'
-        '<line x1="772" y1="173" x2="772" y2="250" stroke="#111" stroke-width="1.5"/>'
-        '<rect x="764" y="250" width="16" height="22" fill="none" stroke="#111" stroke-width="1.3"/>'
-        '<text x="790" y="265" font-size="12" fill="#111">YV1 Vanne 3 voies</text>'
-        '<line x1="772" y1="272" x2="772" y2="285" stroke="#111" stroke-width="1.5"/>'
-        '<polygon points="766,285 778,285 772,294" fill="none" stroke="#111" stroke-width="1.3"/>'
+        '<text x="760" y="110" font-size="11" fill="#111">L / N</text>'
+        '<line x1="780" y1="130" x2="780" y2="155" stroke="#111" stroke-width="1.5"/>'
+        '<line x1="800" y1="130" x2="800" y2="155" stroke="#111" stroke-width="1.5"/>'
+
+        '<rect x="778" y="155" width="24" height="18" fill="none" stroke="#111" stroke-width="1.3"/>'
+        '<text x="763" y="150" font-size="11" fill="#111">PS1</text>'
+        '<line x1="790" y1="173" x2="790" y2="250" stroke="#111" stroke-width="1.5"/>'
+        '<rect x="782" y="250" width="16" height="22" fill="none" stroke="#111" stroke-width="1.3"/>'
+        '<text x="808" y="265" font-size="12" fill="#111">YV1 Vanne 3 voies</text>'
+        '<line x1="790" y1="272" x2="790" y2="285" stroke="#111" stroke-width="1.5"/>'
+        '<polygon points="784,285 796,285 790,294" fill="none" stroke="#111" stroke-width="1.3"/>'
 
         '<rect x="20" y="500" width="960" height="30" fill="none" stroke="#222" stroke-width="1.5"/>'
         '<line x1="900" y1="500" x2="900" y2="530" stroke="#222" stroke-width="1.5"/>'
@@ -105,6 +111,7 @@ def svg_power():
 
         '</svg>'
     )
+
 
 def svg_command():
     return (
@@ -155,6 +162,7 @@ def svg_command():
         '</svg>'
     )
 
+
 def svg_bornier():
     return (
         '<svg width="1000" height="520" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff">'
@@ -183,6 +191,7 @@ def svg_bornier():
         '<text x="920" y="490" font-size="12" fill="#111">12</text>'
         '</svg>'
     )
+
 
 def svg_nomenclature():
     return (
@@ -216,18 +225,6 @@ def svg_nomenclature():
         '</svg>'
     )
 
-data = {
-    "has_controller": True,
-    "has_temp_sensor": True,
-    "has_pump": True,
-    "has_3way_valve": True,
-    "has_fan": True,
-    "has_defrost": True,
-    "setpoint": "+4°C",
-    "pump_on": "≥ 12°C",
-    "pump_off": "≤ 10°C",
-    "differential": "2 K",
-}
 
 if st.button("Générer le schéma électrique"):
     st.success("Schéma généré")
@@ -253,12 +250,4 @@ with tabs[1]:
 
 with tabs[2]:
     st.subheader("Folio commande")
-    components.html(svg_command(), height=760, scrolling=True)
-
-with tabs[3]:
-    st.subheader("Folio bornier")
-    components.html(svg_bornier(), height=760, scrolling=True)
-
-with tabs[4]:
-    st.subheader("Nomenclature simplifiée")
-    components.html(svg_nomenclature(), height=760, scrolling=True)
+    components.html(svg_command
