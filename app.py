@@ -90,7 +90,6 @@ def parse_analysis(text: str) -> dict:
             "tt1": "TT1",
             "tt2": "TT2",
             "ps1": "PS1",
-            "fr1": "FR1",
         },
     }
 
@@ -344,7 +343,6 @@ def build_command_svg(data: dict) -> str:
     text(parts, xL - 14, 80, "L", "bold")
     text(parts, xN - 10, 80, "N", "bold")
 
-    # Rang 1 pompe
     y1 = 175
     line(parts, xL, y1, 210, y1)
     if data["has_defrost"]:
@@ -359,14 +357,12 @@ def build_command_svg(data: dict) -> str:
     line(parts, 1210, y1, 1314, y1)
     line(parts, 1346, y1, xN, y1)
 
-    # Auto-maintien
     line(parts, 365, y1 - 40, 365, y1)
     line(parts, 1210, y1 - 40, 1210, y1)
     line(parts, 365, y1 - 40, 510, y1 - 40)
     draw_contact_no(parts, 560, y1 - 40, "KM1 13-14")
     line(parts, 590, y1 - 40, 1210, y1 - 40)
 
-    # Rang 2 ventilation
     if data["has_fan"]:
         y2 = 275
         line(parts, xL, y2, 1210, y2)
@@ -375,7 +371,6 @@ def build_command_svg(data: dict) -> str:
         line(parts, 1346, y2, xN, y2)
         text(parts, 300, y2 - 10, "Ventilation permanente", "tiny")
 
-    # Bloc MPX et DT1
     rect(parts, 620, 430, 210, 130, "box")
     text(parts, 635, 452, "A1 MPX PRO", "bold")
     text(parts, 635, 474, "Entrées sondes", "small")
@@ -506,7 +501,7 @@ def build_bom_svg(data: dict) -> str:
 
 
 # =========================================================
-# FOLIO 25 - LISTE MATÉRIEL
+# FOLIO 25 - LISTE MATERIEL
 # =========================================================
 
 def build_material_svg(data: dict) -> str:
@@ -563,14 +558,11 @@ def build_material_svg(data: dict) -> str:
 def build_implantation_svg(data: dict) -> str:
     width, height = 1450, 900
     parts = svg_header(width, height)
-
     draw_sheet(parts, width, height, data["project_title"], "30 - Implantation", "15")
 
-    # Cadre principal
     rect(parts, 140, 120, 1080, 620, "box")
     text(parts, 160, 145, "Vue avant coffret", "bold")
 
-    # Ligne haute
     rect(parts, 220, 200, 95, 55, "box")
     text(parts, 248, 233, "IG1", "bold")
 
@@ -584,36 +576,4 @@ def build_implantation_svg(data: dict) -> str:
     text(parts, 660, 233, "Q2", "bold")
 
     rect(parts, 760, 200, 95, 55, "box")
-    text(parts, 790, 233, "KM1", "bold")
-
-    rect(parts, 895, 200, 95, 55, "box")
-    text(parts, 930, 233, "T1", "bold")
-
-    # Rangée milieu
-    rect(parts, 220, 330, 190, 80, "box")
-    text(parts, 275, 365, "A1 MPX PRO", "bold")
-
-    rect(parts, 445, 330, 120, 80, "box")
-    text(parts, 485, 365, "DT1", "bold")
-
-    rect(parts, 610, 330, 120, 80, "box")
-    text(parts, 645, 365, "PS1", "bold")
-
-    rect(parts, 770, 330, 140, 80, "box")
-    text(parts, 810, 365, "KV1", "bold")
-
-    rect(parts, 950, 330, 200, 80, "box")
-    text(parts, 1015, 365, "X1 BORNIER", "bold")
-
-    # Bas coffret
-    rect(parts, 220, 500, 180, 120, "box")
-    text(parts, 255, 560, "Réserve", "bold")
-
-    rect(parts, 450, 500, 240, 120, "box")
-    text(parts, 500, 560, "Passage câbles", "bold")
-
-    rect(parts, 760, 500, 280, 120, "box")
-    text(parts, 815, 560, "Zone raccordements terrain", "bold")
-
-    return svg_footer(parts)
-    
+    text(parts, 79
