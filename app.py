@@ -563,11 +563,14 @@ def build_material_svg(data: dict) -> str:
 def build_implantation_svg(data: dict) -> str:
     width, height = 1450, 900
     parts = svg_header(width, height)
+
     draw_sheet(parts, width, height, data["project_title"], "30 - Implantation", "15")
 
+    # Cadre principal
     rect(parts, 140, 120, 1080, 620, "box")
     text(parts, 160, 145, "Vue avant coffret", "bold")
 
+    # Ligne haute
     rect(parts, 220, 200, 95, 55, "box")
     text(parts, 248, 233, "IG1", "bold")
 
@@ -586,6 +589,7 @@ def build_implantation_svg(data: dict) -> str:
     rect(parts, 895, 200, 95, 55, "box")
     text(parts, 930, 233, "T1", "bold")
 
+    # Rangée milieu
     rect(parts, 220, 330, 190, 80, "box")
     text(parts, 275, 365, "A1 MPX PRO", "bold")
 
@@ -601,6 +605,7 @@ def build_implantation_svg(data: dict) -> str:
     rect(parts, 950, 330, 200, 80, "box")
     text(parts, 1015, 365, "X1 BORNIER", "bold")
 
+    # Bas coffret
     rect(parts, 220, 500, 180, 120, "box")
     text(parts, 255, 560, "Réserve", "bold")
 
@@ -611,3 +616,4 @@ def build_implantation_svg(data: dict) -> str:
     text(parts, 815, 560, "Zone raccordements terrain", "bold")
 
     return svg_footer(parts)
+    
