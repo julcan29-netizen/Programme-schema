@@ -563,4 +563,3 @@ def build_summary_text(data: dict) -> str:
     lines.append(f'Différentiel : {data["differential"]}')
 
     return "\n".join(lines)
-    
