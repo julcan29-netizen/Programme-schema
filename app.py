@@ -1,149 +1,112 @@
 import streamlit as st
 
-st.set_page_config(page_title="Schéma coffret", layout="wide")
+# =========================
+# SVG PUISSANCE
+# =========================
+def build_power_svg():
+    parts = []
+
+    parts.append('<svg width="900" height="500" style="background-color:black">')
+
+    # Titre
+    parts.append('<text x="20" y="30" fill="white" font-size="20">FOLIO PUISSANCE</text>')
+
+    # ===== BARRE ALIMENTATION =====
+    parts.append('<line x1="180" y1="80" x2="580" y2="80" stroke="white" stroke-width="3"/>')
+
+    # ===== POMPE =====
+    # Descente
+    parts.append('<line x1="200" y1="80" x2="200" y2="120" stroke="white"/>')
+    parts.append('<line x1="260" y1="80" x2="260" y2="120" stroke="white"/>')
+
+    # Colonnes
+    parts.append('<line x1="200" y1="120" x2="200" y2="400" stroke="white" stroke-width="3"/>')
+    parts.append('<line x1="260" y1="120" x2="260" y2="400" stroke="white" stroke-width="3"/>')
+
+    # Labels
+    parts.append('<text x="195" y="115" fill="white">L</text>')
+    parts.append('<text x="255" y="115" fill="white">N</text>')
+    parts.append('<text x="205" y="100" fill="white">Pompe</text>')
+
+    # Q1
+    parts.append('<rect x="200" y="140" width="60" height="30" stroke="white" fill="none"/>')
+    parts.append('<text x="220" y="160" fill="white">Q1</text>')
+
+    # DM1
+    parts.append('<rect x="200" y="190" width="60" height="30" stroke="white" fill="none"/>')
+    parts.append('<text x="215" y="210" fill="white">DM1</text>')
+
+    # KM1
+    parts.append('<rect x="200" y="240" width="60" height="30" stroke="white" fill="none"/>')
+    parts.append('<text x="215" y="260" fill="white">KM1</text>')
+
+    # Liaison moteur
+    parts.append('<line x1="230" y1="270" x2="230" y2="310" stroke="white"/>')
+
+    # Moteur
+    parts.append('<circle cx="230" cy="350" r="30" stroke="white" fill="none"/>')
+    parts.append('<text x="222" y="355" fill="white">M</text>')
+
+    # ===== VENTILATION =====
+    # Descente
+    parts.append('<line x1="500" y1="80" x2="500" y2="120" stroke="white"/>')
+    parts.append('<line x1="560" y1="80" x2="560" y2="120" stroke="white"/>')
+
+    # Colonnes
+    parts.append('<line x1="500" y1="120" x2="500" y2="400" stroke="white" stroke-width="3"/>')
+    parts.append('<line x1="560" y1="120" x2="560" y2="400" stroke="white" stroke-width="3"/>')
+
+    # Labels
+    parts.append('<text x="495" y="115" fill="white">L</text>')
+    parts.append('<text x="555" y="115" fill="white">N</text>')
+    parts.append('<text x="505" y="100" fill="white">Ventilation</text>')
+
+    # Q2
+    parts.append('<rect x="500" y="140" width="60" height="30" stroke="white" fill="none"/>')
+    parts.append('<text x="520" y="160" fill="white">Q2</text>')
+
+    # KM2
+    parts.append('<rect x="500" y="200" width="60" height="30" stroke="white" fill="none"/>')
+    parts.append('<text x="515" y="220" fill="white">KM2</text>')
+
+    # Liaison ventilo
+    parts.append('<line x1="530" y1="230" x2="530" y2="300" stroke="white"/>')
+
+    # Ventilateur
+    parts.append('<circle cx="530" cy="340" r="30" stroke="white" fill="none"/>')
+    parts.append('<text x="522" y="345" fill="white">V</text>')
+
+    parts.append('</svg>')
+
+    return "".join(parts)
+
+
+# =========================
+# UI STREAMLIT
+# =========================
 
 st.title("Générateur de schéma électrique")
 
-# -----------------------
-# Données par défaut
-# -----------------------
-data = {
-    "has_controller": True,
-    "has_temp_sensor": True,
-    "has_pump": True,
-    "has_3way_valve": True,
-    "has_fan": True,
-    "has_defrost": True,
-    "setpoint": "+4°C",
-    "pump_on": "≥ 12°C",
-    "pump_off": "≤ 10°C",
-    "differential": "2 K",
-}
-
-# -----------------------
-# Résumé
-# -----------------------
-def build_summary_text(data):
-    lines = []
-
-    if data["has_controller"]:
-        lines.append("Contrôleur local détecté")
-    if data["has_temp_sensor"]:
-        lines.append("Sondes de température détectées")
-    if data["has_pump"]:
-        lines.append("Pompe détectée")
-    if data["has_3way_valve"]:
-        lines.append("Vanne 3 voies modulante détectée")
-    if data["has_fan"]:
-        lines.append("Ventilation détectée")
-    if data["has_defrost"]:
-        lines.append("Mode dégivrage détecté")
-
-    lines.append("Consigne : " + data["setpoint"])
-    lines.append("Marche pompe : " + data["pump_on"])
-    lines.append("Arrêt pompe : " + data["pump_off"])
-    lines.append("Différentiel : " + data["differential"])
-
-    return "\n".join(lines)
-
-# -----------------------
-# Affichage
-# -----------------------
 st.subheader("Résumé de fonctionnement")
-st.text(build_summary_text(data))
 
-# -----------------------
-# Bouton test
-# -----------------------
+st.write("Contrôleur local détecté")
+st.write("Sondes de température détectées")
+st.write("Pompe détectée")
+st.write("Vanne 3 voies modulante détectée")
+st.write("Ventilation détectée")
+st.write("Mode dégivrage détecté")
+
+st.write("Consigne : +4°C")
+st.write("Marche pompe : ≥ 12°C")
+st.write("Arrêt pompe : ≤ 10°C")
+st.write("Différentiel : 2 K")
+
 if st.button("Générer le schéma électrique"):
     st.success("Schéma généré (simulation OK)")
 
+# ===== FOLIO PUISSANCE =====
 st.subheader("Folio puissance")
 
 if st.button("Afficher folio puissance"):
-
-    svg = """
-<svg width="1100" height="650" xmlns="http://www.w3.org/2000/svg">
-
-<!-- CADRE -->
-<rect x="10" y="10" width="1080" height="630" stroke="white" fill="none"/>
-
-<!-- TITRE -->
-<text x="30" y="40" fill="white" font-size="20">FOLIO PUISSANCE</text>
-
-<!-- BARRE ALIM (corrigée) -->
-<line x1="150" y1="90" x2="650" y2="90" stroke="white" stroke-width="3"/>
-
-<!-- ===== POMPE ===== -->
-<text x="180" y="120" fill="white">Pompe</text>
-
-<!-- L N -->
-<text x="170" y="110" fill="white">L</text>
-<text x="250" y="110" fill="white">N</text>
-
-<line x1="180" y1="120" x2="180" y2="520" stroke="white" stroke-width="4"/>
-<line x1="260" y1="120" x2="260" y2="520" stroke="white" stroke-width="4"/>
-
-<!-- liaison haut -->
-<line x1="180" y1="90" x2="180" y2="120" stroke="white"/>
-<line x1="260" y1="90" x2="260" y2="120" stroke="white"/>
-
-<!-- Q1 -->
-<rect x="180" y="150" width="80" height="40" stroke="white" fill="none"/>
-<text x="205" y="175" fill="white">Q1</text>
-
-<!-- DM1 -->
-<rect x="180" y="210" width="80" height="40" stroke="white" fill="none"/>
-<text x="195" y="235" fill="white">DM1</text>
-
-<!-- KM1 -->
-<rect x="180" y="270" width="80" height="40" stroke="white" fill="none"/>
-<text x="195" y="295" fill="white">KM1</text>
-
-<!-- descente -->
-<line x1="220" y1="310" x2="220" y2="360" stroke="white" stroke-width="3"/>
-
-<!-- moteur -->
-<circle cx="220" cy="420" r="35" stroke="white" fill="none"/>
-<text x="210" y="425" fill="white">M</text>
-
-
-<!-- ===== VENTILATION ===== -->
-<text x="500" y="120" fill="white">Ventilation</text>
-
-<!-- L N -->
-<text x="490" y="110" fill="white">L</text>
-<text x="570" y="110" fill="white">N</text>
-
-<line x1="500" y1="120" x2="500" y2="520" stroke="white" stroke-width="4"/>
-<line x1="580" y1="120" x2="580" y2="520" stroke="white" stroke-width="4"/>
-
-<!-- liaison haut -->
-<line x1="500" y1="90" x2="500" y2="120" stroke="white"/>
-<line x1="580" y1="90" x2="580" y2="120" stroke="white"/>
-
-<!-- Q2 -->
-<rect x="500" y="150" width="80" height="40" stroke="white" fill="none"/>
-<text x="525" y="175" fill="white">Q2</text>
-
-<!-- KM2 -->
-<rect x="500" y="230" width="80" height="40" stroke="white" fill="none"/>
-<text x="520" y="255" fill="white">KM2</text>
-
-<!-- descente -->
-<line x1="540" y1="270" x2="540" y2="320" stroke="white" stroke-width="3"/>
-
-<!-- ventil -->
-<circle cx="540" cy="370" r="30" stroke="white" fill="none"/>
-<text x="530" y="375" fill="white">V</text>
-
-
-<!-- ===== CARTOUCHE ===== -->
-<rect x="10" y="560" width="1080" height="70" stroke="white" fill="none"/>
-<text x="30" y="600" fill="white">Coffret froid mono-ventil</text>
-<text x="900" y="600" fill="white">Folio : 10</text>
-
-</svg>
-"""
-
-    st.components.v1.html(svg, height=520)
+    svg = build_power_svg()
+    st.components.v1.html(svg, height=500)
