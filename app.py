@@ -3,15 +3,8 @@ import html
 import streamlit as st
 import streamlit.components.v1 as components
 
-st.set_page_config(
-    page_title="Dossier électrique type froid",
-    layout="wide"
-)
+st.set_page_config(page_title="Dossier électrique type froid", layout="wide")
 
-
-# =========================================================
-# PARSER
-# =========================================================
 
 def _has_any(text: str, patterns: list[str]) -> bool:
     return any(p in text for p in patterns)
@@ -33,26 +26,15 @@ def parse_analysis(text: str) -> dict:
 
     setpoint = _extract_first_temp(
         text,
-        [
-            r"point de consigne[^0-9+-]*([+-]?\d+)",
-            r"consigne[^0-9+-]*([+-]?\d+)",
-        ],
+        [r"point de consigne[^0-9+-]*([+-]?\d+)", r"consigne[^0-9+-]*([+-]?\d+)"],
     )
-
     pump_on = _extract_first_temp(
         text,
-        [
-            r"marche[^0-9+-]*([+-]?\d+)",
-            r"température\s*[>≥=]+\s*([+-]?\d+)",
-        ],
+        [r"marche[^0-9+-]*([+-]?\d+)", r"température\s*[>≥=]+\s*([+-]?\d+)"],
     )
-
     pump_off = _extract_first_temp(
         text,
-        [
-            r"arr[eê]t[^0-9+-]*([+-]?\d+)",
-            r"température\s*[<≤=]+\s*([+-]?\d+)",
-        ],
+        [r"arr[eê]t[^0-9+-]*([+-]?\d+)", r"température\s*[<≤=]+\s*([+-]?\d+)"],
     )
 
     diff_match = re.search(r"(diff[ée]rentiel)[^0-9]*([0-9]+)\s*k", t)
@@ -81,7 +63,7 @@ def parse_analysis(text: str) -> dict:
             "km1": "KM1",
             "kv1": "KV1",
             "t1": "T1",
-            "a1": "A1",
+            "a1": "A1 MPX PRO",
             "dt1": "DT1",
             "x1": "X1",
             "m1": "M1 Pompe",
@@ -93,10 +75,6 @@ def parse_analysis(text: str) -> dict:
         },
     }
 
-
-# =========================================================
-# SVG BASE
-# =========================================================
 
 def esc(value: str) -> str:
     return html.escape(str(value), quote=True)
@@ -147,11 +125,7 @@ def poly(parts: list[str], points: list[tuple[int, int]], klass: str = "box") ->
 
 
 def draw_sheet(parts: list[str], width: int, height: int, project_title: str, sheet_name: str, folio_no: str) -> None:
-    top = 55
-    left = 40
-    right = width - 40
-    bottom = height - 95
-
+    top, left, right, bottom = 55, 40, width - 40, height - 95
     rect(parts, left, top, right - left, bottom - top, "box")
     text(parts, 50, 35, project_title, "title")
 
@@ -177,10 +151,6 @@ def draw_sheet(parts: list[str], width: int, height: int, project_title: str, sh
     text(parts, width - 235, cart_y + 24, "Folio", "bold")
     text(parts, width - 95, cart_y + 24, folio_no, "bold")
 
-
-# =========================================================
-# SYMBOLES
-# =========================================================
 
 def draw_switch_3p(parts: list[str], x: int, y: int, label: str) -> None:
     for i in range(3):
@@ -254,15 +224,10 @@ def draw_terminal(parts: list[str], x: int, y: int, label: str) -> None:
     text(parts, x + 10, y + 4, label, "text")
 
 
-# =========================================================
-# FOLIO 10 - PUISSANCE
-# =========================================================
-
 def build_power_svg(data: dict) -> str:
     width, height = 1500, 900
     parts = svg_header(width, height)
     draw_sheet(parts, width, height, data["project_title"], "10 - Puissance", "10")
-
     r = data["refs"]
 
     x = 85
@@ -305,7 +270,6 @@ def build_power_svg(data: dict) -> str:
         rect(parts, 1030, 225, 42, 34, "box")
         text(parts, 1038, 247, "PS", "text")
         text(parts, 1088, 247, r["ps1"], "text")
-
         rect(parts, 1035, 395, 32, 32, "box")
         line(parts, 1051, 427, 1051, 454)
         poly(parts, [(1039, 454), (1063, 454), (1051, 468)], "box")
@@ -314,30 +278,16 @@ def build_power_svg(data: dict) -> str:
 
     text(parts, 1205, 150, "Départs principaux", "small")
     text(parts, 1205, 170, "Pompe / ventilation / actionneur", "small")
-
     return svg_footer(parts)
 
-
-# =========================================================
-# FOLIO 11 - COMMANDE MPX / DT1
-# =========================================================
 
 def build_command_svg(data: dict) -> str:
     width, height = 1600, 900
     parts = svg_header(width, height)
-    draw_sheet(
-        parts,
-        width,
-        height,
-        data["project_title"],
-        "11 - MPX PRO / Détente électrique / Dégivrage naturel",
-        "11",
-    )
-
+    draw_sheet(parts, width, height, data["project_title"], "11 - MPX PRO / Détente électrique / Dégivrage naturel", "11")
     r = data["refs"]
 
-    xL = 95
-    xN = 1510
+    xL, xN = 95, 1510
     line(parts, xL, 90, xL, 790, "rail")
     line(parts, xN, 90, xN, 790, "rail")
     text(parts, xL - 14, 80, "L", "bold")
@@ -402,24 +352,17 @@ def build_command_svg(data: dict) -> str:
     text(parts, 635, 654, f'Arrêt pompe : {data["pump_off"]}', "text")
     text(parts, 635, 676, f'Différentiel : {data["differential"]}', "text")
     text(parts, 635, 698, "Mode : dégivrage naturel", "text")
-
     return svg_footer(parts)
 
-
-# =========================================================
-# FOLIO 15/16 - BORNIER X1
-# =========================================================
 
 def build_terminal_svg(data: dict) -> str:
     width, height = 1450, 900
     parts = svg_header(width, height)
     draw_sheet(parts, width, height, data["project_title"], "15-16 - Bornier X1", "12")
-
     r = data["refs"]
-    text(parts, 90, 130, f'Bornier {r["x1"]}', "bold")
 
-    x = 85
-    y = 165
+    text(parts, 90, 130, f'Bornier {r["x1"]}', "bold")
+    x, y = 85, 165
 
     rect(parts, x, y, 1185, 34, "box")
     line(parts, x + 130, y, x + 130, y + 34)
@@ -453,10 +396,6 @@ def build_terminal_svg(data: dict) -> str:
     return svg_footer(parts)
 
 
-# =========================================================
-# FOLIO 20 - NOMENCLATURE
-# =========================================================
-
 def build_bom_svg(data: dict) -> str:
     width, height = 1450, 900
     parts = svg_header(width, height)
@@ -479,8 +418,7 @@ def build_bom_svg(data: dict) -> str:
         ("TT2", "Sonde reprise", "1"),
     ]
 
-    x = 85
-    y = 150
+    x, y = 85, 150
     rect(parts, x, y, 1185, 34, "box")
     line(parts, x + 180, y, x + 180, y + 34)
     line(parts, x + 950, y, x + 950, y + 34)
@@ -499,10 +437,6 @@ def build_bom_svg(data: dict) -> str:
 
     return svg_footer(parts)
 
-
-# =========================================================
-# FOLIO 25 - LISTE MATERIEL
-# =========================================================
 
 def build_material_svg(data: dict) -> str:
     width, height = 1450, 900
@@ -526,8 +460,7 @@ def build_material_svg(data: dict) -> str:
         ("X1", "Bornier de raccordement", "1", "Extérieur coffret"),
     ]
 
-    x = 65
-    y = 145
+    x, y = 65, 145
     rect(parts, x, y, 1220, 34, "box")
     line(parts, x + 140, y, x + 140, y + 34)
     line(parts, x + 710, y, x + 710, y + 34)
@@ -551,10 +484,6 @@ def build_material_svg(data: dict) -> str:
     return svg_footer(parts)
 
 
-# =========================================================
-# FOLIO 30 - IMPLANTATION
-# =========================================================
-
 def build_implantation_svg(data: dict) -> str:
     width, height = 1450, 900
     parts = svg_header(width, height)
@@ -576,4 +505,53 @@ def build_implantation_svg(data: dict) -> str:
     text(parts, 660, 233, "Q2", "bold")
 
     rect(parts, 760, 200, 95, 55, "box")
-    text(parts, 79
+    text(parts, 790, 233, "KM1", "bold")
+
+    rect(parts, 895, 200, 95, 55, "box")
+    text(parts, 930, 233, "T1", "bold")
+
+    rect(parts, 220, 330, 190, 80, "box")
+    text(parts, 275, 365, "A1 MPX PRO", "bold")
+
+    rect(parts, 445, 330, 120, 80, "box")
+    text(parts, 485, 365, "DT1", "bold")
+
+    rect(parts, 610, 330, 120, 80, "box")
+    text(parts, 645, 365, "PS1", "bold")
+
+    rect(parts, 770, 330, 140, 80, "box")
+    text(parts, 810, 365, "KV1", "bold")
+
+    rect(parts, 950, 330, 200, 80, "box")
+    text(parts, 1015, 365, "X1 BORNIER", "bold")
+
+    rect(parts, 220, 500, 180, 120, "box")
+    text(parts, 255, 560, "Réserve", "bold")
+
+    rect(parts, 450, 500, 240, 120, "box")
+    text(parts, 500, 560, "Passage câbles", "bold")
+
+    rect(parts, 760, 500, 280, 120, "box")
+    text(parts, 815, 560, "Zone raccordements terrain", "bold")
+
+    return svg_footer(parts)
+
+
+def render_svg(svg_code: str, height: int) -> None:
+    components.html(svg_code, height=height, scrolling=True)
+
+
+def build_summary_text(data: dict) -> str:
+    lines = []
+    if data["has_controller"]:
+        lines.append("Contrôleur local détecté")
+    if data["has_temp_sensor"]:
+        lines.append("Sondes de température détectées")
+    if data["has_pump"]:
+        lines.append("Pompe détectée")
+    if data["has_3way_valve"]:
+        lines.append("Vanne 3 voies modulante détectée")
+    if data["has_fan"]:
+        lines.append("Ventilation détectée")
+    if data["has_defrost"]:
+        lines.append("Mode
