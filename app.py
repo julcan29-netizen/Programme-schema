@@ -8,6 +8,7 @@ st.set_page_config(
     layout="wide"
 )
 
+
 # =========================================================
 # PARSER
 # =========================================================
@@ -179,7 +180,7 @@ def draw_sheet(parts: list[str], width: int, height: int, project_title: str, sh
 
 
 # =========================================================
-# PETITS SYMBOLES
+# SYMBOLES
 # =========================================================
 
 def draw_switch_3p(parts: list[str], x: int, y: int, label: str) -> None:
@@ -265,7 +266,6 @@ def build_power_svg(data: dict) -> str:
 
     r = data["refs"]
 
-    # Départ pompe à gauche, plus compact et plus proche d'un folio réel
     x = 85
     cols = [x, x + 30, x + 60]
     for idx, xx in enumerate(cols, start=1):
@@ -286,7 +286,6 @@ def build_power_svg(data: dict) -> str:
         line(parts, xx, 419, xx, 476)
         line(parts, xx, 524, xx, 607)
 
-    # Départ ventilation
     if data["has_fan"]:
         xf = 360
         line(parts, xf, 95, xf, 705, "rail")
@@ -298,13 +297,11 @@ def build_power_svg(data: dict) -> str:
         line(parts, xf, 249, xf, 607)
         line(parts, xf + 18, 249, xf + 18, 607)
 
-    # Transformateur
     draw_transformer(parts, 690, 245, r["t1"])
     line(parts, 660, 195, 660, 233)
     line(parts, 720, 195, 720, 233)
     text(parts, 642, 182, "230V/24V", "tiny")
 
-    # Alimentation actionneur
     if data["has_3way_valve"]:
         rect(parts, 1030, 225, 42, 34, "box")
         text(parts, 1038, 247, "PS", "text")
@@ -316,7 +313,6 @@ def build_power_svg(data: dict) -> str:
         text(parts, 1085, 414, f'{r["yv1"]} Vanne 3 voies', "text")
         line(parts, 1051, 259, 1051, 395)
 
-    # Petit bloc repérage
     text(parts, 1205, 150, "Départs principaux", "small")
     text(parts, 1205, 170, "Pompe / ventilation / actionneur", "small")
 
@@ -330,7 +326,14 @@ def build_power_svg(data: dict) -> str:
 def build_command_svg(data: dict) -> str:
     width, height = 1600, 900
     parts = svg_header(width, height)
-    draw_sheet(parts, width, height, data["project_title"], "11 - MPX PRO / Détente électrique / Dégivrage naturel", "11")
+    draw_sheet(
+        parts,
+        width,
+        height,
+        data["project_title"],
+        "11 - MPX PRO / Détente électrique / Dégivrage naturel",
+        "11",
+    )
 
     r = data["refs"]
 
@@ -356,7 +359,7 @@ def build_command_svg(data: dict) -> str:
     line(parts, 1210, y1, 1314, y1)
     line(parts, 1346, y1, xN, y1)
 
-    # Auto-maintien KM1
+    # Auto-maintien
     line(parts, 365, y1 - 40, 365, y1)
     line(parts, 1210, y1 - 40, 1210, y1)
     line(parts, 365, y1 - 40, 510, y1 - 40)
@@ -384,7 +387,6 @@ def build_command_svg(data: dict) -> str:
     text(parts, 902, 492, "Interface", "small")
     text(parts, 900, 510, "0-10V", "small")
 
-    # Sondes
     if data["has_temp_sensor"]:
         draw_sensor(parts, 480, 465, r["tt1"])
         draw_sensor(parts, 480, 525, r["tt2"])
@@ -393,7 +395,6 @@ def build_command_svg(data: dict) -> str:
         text(parts, 510, 457, "Entrée batterie", "tiny")
         text(parts, 510, 517, "Reprise", "tiny")
 
-    # Sorties vanne
     if data["has_3way_valve"]:
         line(parts, 830, 470, 890, 470)
         line(parts, 985, 470, 1070, 470)
@@ -401,7 +402,6 @@ def build_command_svg(data: dict) -> str:
         draw_terminal(parts, 1145, 470, "AO-")
         text(parts, 1190, 474, "0-10V vers YV1", "text")
 
-    # Paramètres
     text(parts, 635, 610, f'Consigne : {data["setpoint"]}', "text")
     text(parts, 635, 632, f'Marche pompe : {data["pump_on"]}', "text")
     text(parts, 635, 654, f'Arrêt pompe : {data["pump_off"]}', "text")
@@ -565,10 +565,16 @@ def build_implantation_svg(data: dict) -> str:
     parts = svg_header(width, height)
     draw_sheet(parts, width, height, data["project_title"], "30 - Implantation", "15")
 
-    # contour coffret
     rect(parts, 140, 120, 1080, 620, "box")
     text(parts, 160, 145, "Vue avant coffret", "bold")
 
-    # rangée haute
     rect(parts, 220, 200, 95, 55, "box")
-    text(parts,
+    text(parts, 248, 233, "IG1", "bold")
+
+    rect(parts, 355, 200, 95, 55, "box")
+    text(parts, 390, 233, "Q1", "bold")
+
+    rect(parts, 490, 200, 95, 55, "box")
+    text(parts, 520, 233, "DM1", "bold")
+
+    rect(parts, 625, 200, 95,
