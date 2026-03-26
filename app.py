@@ -543,6 +543,7 @@ def render_svg(svg_code: str, height: int) -> None:
 
 def build_summary_text(data: dict) -> str:
     lines = []
+
     if data["has_controller"]:
         lines.append("Contrôleur local détecté")
     if data["has_temp_sensor"]:
@@ -554,4 +555,12 @@ def build_summary_text(data: dict) -> str:
     if data["has_fan"]:
         lines.append("Ventilation détectée")
     if data["has_defrost"]:
-        lines.append("Mode
+        lines.append("Mode dégivrage détecté")
+
+    lines.append(f'Consigne : {data["setpoint"]}')
+    lines.append(f'Marche pompe : {data["pump_on"]}')
+    lines.append(f'Arrêt pompe : {data["pump_off"]}')
+    lines.append(f'Différentiel : {data["differential"]}')
+
+    return "\n".join(lines)
+    
