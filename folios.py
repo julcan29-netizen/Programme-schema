@@ -34,7 +34,6 @@ def build_power_svg(data: dict) -> str:
     draw_switch_3p(parts, 90, 150, r["ig1"])
     draw_breaker_3p(parts, 90, 250, r["q1"])
     draw_breaker_3p(parts, 90, 360, r["dm1"])
-
     draw_breaker_3p(parts, 90, 470, r["q2"])
 
     from style import draw_contactor_3p
@@ -92,31 +91,25 @@ def build_regulation_svg(data: dict) -> str:
     text(parts, xL - 15, 70, "L", "bold")
     text(parts, xN - 10, 70, "N", "bold")
 
-    # RANG 1 : COMMANDE POMPE
     y = 200
     line(parts, xL, y, xN, y)
-
     if data["has_defrost"]:
         draw_contact_nc(parts, 250, y, "DEG")
     draw_contact_no(parts, 420, y, "REG")
-
     draw_coil(parts, 1350, y, r["km1"])
 
-    # RANG 2 : VENTILATION
     if data["has_fan"]:
         y2 = 300
         line(parts, xL, y2, xN, y2)
         draw_coil(parts, 1350, y2, "KV1")
         text(parts, 320, y2 - 10, "Ventilation permanente", "tiny")
 
-    # RANG 3 : REGULATEUR
     y3 = 500
     draw_controller(parts, 700, y3 - 50, 150, 100, r["a1"])
 
     if data["has_temp_sensor"]:
         draw_sensor(parts, 500, y3 - 30, r["tt1"])
         draw_sensor(parts, 500, y3 + 40, r["tt2"])
-
         line(parts, 520, y3 - 30, 700, y3 - 30)
         line(parts, 520, y3 + 40, 700, y3 + 40)
 
