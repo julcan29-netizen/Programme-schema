@@ -5,7 +5,7 @@ st.title("Générateur de schéma simple")
 text = st.text_area("Décris ton installation")
 
 if st.button("Générer"):
-    st.markdown(f"""
+    st.markdown("""
 ```mermaid
 flowchart TD
 A[Analyse] --> B[Installation]
