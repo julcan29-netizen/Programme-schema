@@ -2,9 +2,12 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from parser import parse_analysis
-from folio_power import build_power_svg
-from folio_regulation import build_regulation_svg
-from folio_terminal import build_terminal_svg
+from folios import (
+    build_bom_svg,
+    build_power_svg,
+    build_regulation_svg,
+    build_terminal_svg,
+)
 
 
 def render_svg(svg_code: str, height: int) -> None:
@@ -25,19 +28,17 @@ def build_summary_text(data: dict) -> str:
         lines.append("Ventilation détectée")
     if data["has_defrost"]:
         lines.append("Mode dégivrage détecté")
-    if data["setpoint"]:
-        lines.append(f'Consigne détectée : {data["setpoint"]}')
-    if data["pump_on"]:
-        lines.append(f'Seuil marche pompe : {data["pump_on"]}')
-    if data["pump_off"]:
-        lines.append(f'Seuil arrêt pompe : {data["pump_off"]}')
-    return "\n".join(lines) if lines else "Aucun équipement reconnu."
+    lines.append(f'Consigne : {data["setpoint"]}')
+    lines.append(f'Marche pompe : {data["pump_on"]}')
+    lines.append(f'Arrêt pompe : {data["pump_off"]}')
+    lines.append(f'Différentiel : {data["differential"]}')
+    return "\n".join(lines)
 
 
-st.set_page_config(page_title="Générateur de schéma électrique conventionnel V8", layout="wide")
+st.set_page_config(page_title="Générateur de schéma électrique conventionnel V10", layout="wide")
 
-st.title("Générateur de schéma électrique conventionnel V8")
-st.caption("Analyse fonctionnelle → puissance + commande + bornier, style industriel simplifié.")
+st.title("Générateur de schéma électrique conventionnel V10")
+st.caption("Template métier mono ventil / pompe / vanne 3 voies / régulateur.")
 
 default_text = """Un contrôleur de boucle, associé à une sonde de température du retour ou de la reprise, permet de moduler l’ouverture d’une vanne 3 voies motorisée en fonction de la température mesurée à l’entrée frigorifère.
 La pompe de circulation, à débit fixe, alimente le circuit en eau glycolée froide.
@@ -58,11 +59,9 @@ analysis_text = st.text_area("Décris ton installation", value=default_text, hei
 if st.button("Générer le schéma électrique"):
     data = parse_analysis(analysis_text)
 
-    power_svg = build_power_svg(data)
-    regulation_svg = build_regulation_svg(data)
-    terminal_svg = build_terminal_svg(data)
-
-    tab1, tab2, tab3, tab4 = st.tabs(["Résumé", "Puissance", "Commande", "Bornier"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(
+        ["Résumé", "Puissance", "Commande", "Bornier", "Nomenclature"]
+    )
 
     with tab1:
         st.subheader("Éléments détectés")
@@ -71,12 +70,16 @@ if st.button("Générer le schéma électrique"):
 
     with tab2:
         st.subheader("Folio puissance")
-        render_svg(power_svg, 820)
+        render_svg(build_power_svg(data), 830)
 
     with tab3:
-        st.subheader("Folio commande")
-        render_svg(regulation_svg, 820)
+        st.subheader("Folio commande / régulation")
+        render_svg(build_regulation_svg(data), 830)
 
     with tab4:
         st.subheader("Folio bornier")
-        render_svg(terminal_svg, 720)
+        render_svg(build_terminal_svg(data), 760)
+
+    with tab5:
+        st.subheader("Nomenclature simplifiée")
+        render_svg(build_bom_svg(data), 760)
