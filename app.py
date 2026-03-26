@@ -71,22 +71,22 @@ if st.button("Afficher folio puissance"):
 <!-- TITRE -->
 <text x="30" y="40" fill="white" font-size="20">FOLIO PUISSANCE</text>
 
-<!-- BARRE HORIZONTALE ALIM -->
-<line x1="100" y1="80" x2="1000" y2="80" stroke="white" stroke-width="3"/>
+<!-- BARRE ALIM (corrigée) -->
+<line x1="150" y1="90" x2="650" y2="90" stroke="white" stroke-width="3"/>
 
-<!-- ===== DÉPART POMPE ===== -->
-<text x="180" y="110" fill="white">Pompe</text>
+<!-- ===== POMPE ===== -->
+<text x="180" y="120" fill="white">Pompe</text>
 
 <!-- L N -->
-<line x1="180" y1="120" x2="180" y2="520" stroke="white" stroke-width="4"/>
-<line x1="260" y1="120" x2="260" y2="520" stroke="white" stroke-width="4"/>
-
 <text x="170" y="110" fill="white">L</text>
 <text x="250" y="110" fill="white">N</text>
 
-<!-- Liaison haut -->
-<line x1="180" y1="80" x2="180" y2="120" stroke="white"/>
-<line x1="260" y1="80" x2="260" y2="120" stroke="white"/>
+<line x1="180" y1="120" x2="180" y2="520" stroke="white" stroke-width="4"/>
+<line x1="260" y1="120" x2="260" y2="520" stroke="white" stroke-width="4"/>
+
+<!-- liaison haut -->
+<line x1="180" y1="90" x2="180" y2="120" stroke="white"/>
+<line x1="260" y1="90" x2="260" y2="120" stroke="white"/>
 
 <!-- Q1 -->
 <rect x="180" y="150" width="80" height="40" stroke="white" fill="none"/>
@@ -108,19 +108,19 @@ if st.button("Afficher folio puissance"):
 <text x="210" y="425" fill="white">M</text>
 
 
-<!-- ===== DÉPART VENTIL ===== -->
-<text x="500" y="110" fill="white">Ventilation</text>
+<!-- ===== VENTILATION ===== -->
+<text x="500" y="120" fill="white">Ventilation</text>
 
 <!-- L N -->
-<line x1="500" y1="120" x2="500" y2="520" stroke="white" stroke-width="4"/>
-<line x1="580" y1="120" x2="580" y2="520" stroke="white" stroke-width="4"/>
-
 <text x="490" y="110" fill="white">L</text>
 <text x="570" y="110" fill="white">N</text>
 
-<!-- Liaison haut -->
-<line x1="500" y1="80" x2="500" y2="120" stroke="white"/>
-<line x1="580" y1="80" x2="580" y2="120" stroke="white"/>
+<line x1="500" y1="120" x2="500" y2="520" stroke="white" stroke-width="4"/>
+<line x1="580" y1="120" x2="580" y2="520" stroke="white" stroke-width="4"/>
+
+<!-- liaison haut -->
+<line x1="500" y1="90" x2="500" y2="120" stroke="white"/>
+<line x1="580" y1="90" x2="580" y2="120" stroke="white"/>
 
 <!-- Q2 -->
 <rect x="500" y="150" width="80" height="40" stroke="white" fill="none"/>
