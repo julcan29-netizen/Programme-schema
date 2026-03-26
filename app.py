@@ -3,9 +3,12 @@ import html
 import streamlit as st
 import streamlit.components.v1 as components
 
+st.set_page_config(page_title="Generateur schema electrique V7", layout="wide")
 
-st.set_page_config(page_title="Generateur de schema electrique V6.1", layout="wide")
 
+# =========================
+# ANALYSE TEXTE
+# =========================
 
 def has_any(text: str, patterns: list[str]) -> bool:
     return any(p in text for p in patterns)
@@ -15,12 +18,12 @@ def extract_setpoint(text: str) -> str | None:
     patterns = [
         r"consigne[^0-9+-]*([+-]?\d+)\s*°?\s*c",
         r"point de consigne[^0-9+-]*([+-]?\d+)\s*°?\s*c",
-        r"à\s*([+-]?\d+)\s*°?\s*c",
+        r"\+([0-9]+)\s*°?\s*c",
     ]
     for p in patterns:
         m = re.search(p, text)
         if m:
-            return f"{m.group(1)}°C"
+            return f"+{m.group(1)}°C" if not m.group(1).startswith("-") else f"{m.group(1)}°C"
     return None
 
 
@@ -44,15 +47,11 @@ def parse_analysis(text: str) -> dict:
         "has_controller": has_any(t, ["contrôleur", "controleur", "régulateur", "regulateur"]),
         "has_temp_sensor": has_any(t, ["sonde", "température", "temperature"]),
         "has_pump": "pompe" in t,
-        "has_3way_valve": has_any(t, ["vanne 3 voies", "vanne 3 voies motorisée", "vanne 3 voies modulante"]),
-        "has_valve": "vanne" in t,
+        "has_3way_valve": has_any(t, ["vanne 3 voies", "vanne 3 voies modulante", "vanne 3 voies motorisée"]),
         "has_fan": has_any(t, ["ventilation", "ventilateur"]),
         "has_defrost": has_any(t, ["dégivrage", "degivrage"]),
-        "has_bypass": has_any(t, ["by-pass", "bypass", "boucle de dérivation", "boucle de derivation"]),
-        "has_glycol": has_any(t, ["glycol", "glycolée", "glycolee", "eau glycolée", "eau glycolee"]),
-        "has_evaporator": has_any(t, ["évaporateur", "evaporateur", "batterie froide", "aerotherme", "aérotherme"]),
-        "is_pid": has_any(t, ["pid", "modul", "0-10v", "0/10v"]),
-        "permanent_fan": "ventilation permanente" in t,
+        "has_bypass": has_any(t, ["by-pass", "bypass"]),
+        "has_glycol": has_any(t, ["glycol", "glycolée", "glycolee"]),
     }
 
     data["setpoint"] = extract_setpoint(t)
@@ -65,22 +64,25 @@ def parse_analysis(text: str) -> dict:
     return data
 
 
+# =========================
+# SVG OUTILS
+# =========================
+
 def esc(s: str) -> str:
     return html.escape(str(s), quote=True)
 
 
 def svg_header(width: int, height: int) -> list[str]:
     return [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 {width} {height}" style="background:#ffffff">',
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 {width} {height}" style="background:#fff">',
         "<style>",
-        ".t{font:14px Arial, sans-serif; fill:#111;}",
-        ".ts{font:12px Arial, sans-serif; fill:#111;}",
-        ".tb{font:700 18px Arial, sans-serif; fill:#111;}",
+        ".t{font:14px Arial,sans-serif; fill:#111;}",
+        ".ts{font:12px Arial,sans-serif; fill:#111;}",
+        ".tb{font:700 20px Arial,sans-serif; fill:#111;}",
         ".line{stroke:#111; stroke-width:2; fill:none;}",
-        ".thin{stroke:#111; stroke-width:1.2; fill:none;}",
+        ".thin{stroke:#999; stroke-width:1; fill:none; stroke-dasharray:4 4;}",
         ".box{stroke:#111; stroke-width:2; fill:#fff;}",
-        ".rail{stroke:#111; stroke-width:3;}",
-        ".guide{stroke:#aaa; stroke-width:1; stroke-dasharray:4 4; fill:none;}",
+        ".rail{stroke:#111; stroke-width:3; fill:none;}",
         "</style>",
     ]
 
@@ -90,269 +92,265 @@ def svg_footer(parts: list[str]) -> str:
     return "\n".join(parts)
 
 
-def draw_title_block(parts: list[str], width: int, height: int, title: str) -> None:
-    y = height - 55
-    parts += [
-        f'<rect x="20" y="{y}" width="{width-40}" height="35" class="box"/>',
-        f'<text x="30" y="{y+22}" class="tb">{esc(title)}</text>',
-    ]
-
-
-def draw_page_grid(parts: list[str], width: int, height: int) -> None:
-    top = 50
-    bottom = height - 80
-    left = 40
-    right = width - 40
-
-    parts += [
-        f'<rect x="{left}" y="{top}" width="{right-left}" height="{bottom-top}" class="thin"/>'
-    ]
-
-    col_w = (right - left) / 10
-    for i in range(1, 10):
-        x = left + i * col_w
-        parts.append(f'<line x1="{x}" y1="{top}" x2="{x}" y2="{bottom}" class="guide"/>')
-        parts.append(f'<text x="{x-col_w/2:.0f}" y="{top-10}" class="ts">{i-1}</text>')
-
-    row_h = (bottom - top) / 8
-    letters = list("ABCDEFGH")
-    for i in range(1, 8):
-        y = top + i * row_h
-        parts.append(f'<line x1="{left}" y1="{y}" x2="{right}" y2="{y}" class="guide"/>')
-    for i, letter in enumerate(letters):
-        yy = top + i * row_h + 20
-        parts.append(f'<text x="18" y="{yy}" class="ts">{letter}</text>')
-
-
-def draw_motor(parts: list[str], x: int, y: int, label: str) -> None:
-    r = 20
-    parts += [
-        f'<circle cx="{x}" cy="{y}" r="{r}" class="box"/>',
-        f'<text x="{x-6}" y="{y+5}" class="t">M</text>',
-        f'<text x="{x+28}" y="{y+5}" class="t">{esc(label)}</text>',
-    ]
-
-
-def draw_breaker_3p(parts: list[str], x: int, y: int, label: str) -> None:
-    spacing = 22
-    for i in range(3):
-        xx = x + i * spacing
-        parts += [
-            f'<line x1="{xx}" y1="{y-35}" x2="{xx}" y2="{y-10}" class="line"/>',
-            f'<line x1="{xx}" y1="{y+10}" x2="{xx}" y2="{y+35}" class="line"/>',
-            f'<line x1="{xx-7}" y1="{y-10}" x2="{xx+7}" y2="{y+10}" class="line"/>',
-        ]
-    parts.append(f'<text x="{x+80}" y="{y+5}" class="t">{esc(label)}</text>')
-
-
-def draw_contactor_power_3p(parts: list[str], x: int, y: int, label: str) -> None:
-    spacing = 22
-    for i in range(3):
-        xx = x + i * spacing
-        parts += [
-            f'<line x1="{xx}" y1="{y-35}" x2="{xx}" y2="{y-8}" class="line"/>',
-            f'<line x1="{xx}" y1="{y+8}" x2="{xx}" y2="{y+35}" class="line"/>',
-            f'<line x1="{xx-8}" y1="{y-8}" x2="{xx}" y2="{y+8}" class="line"/>',
-        ]
-    parts.append(f'<text x="{x+80}" y="{y+5}" class="t">{esc(label)}</text>')
-
-
-def draw_power_supply(parts: list[str], x: int, y: int, label: str) -> None:
-    parts += [
-        f'<rect x="{x-20}" y="{y-20}" width="40" height="40" class="box"/>',
-        f'<text x="{x-13}" y="{y+5}" class="t">PS</text>',
-        f'<text x="{x+30}" y="{y+5}" class="t">{esc(label)}</text>',
-    ]
-
-
-def draw_valve_actuator(parts: list[str], x: int, y: int, label: str) -> None:
-    parts += [
-        f'<rect x="{x-18}" y="{y-18}" width="36" height="36" class="box"/>',
-        f'<line x1="{x}" y1="{y+18}" x2="{x}" y2="{y+45}" class="line"/>',
-        f'<polygon points="{x-15},{y+45} {x+15},{y+45} {x},{y+62}" class="box"/>',
-        f'<text x="{x+28}" y="{y+5}" class="t">{esc(label)}</text>',
-    ]
-
-
-def draw_controller(parts: list[str], x: int, y: int, label: str) -> None:
-    parts += [
-        f'<rect x="{x-40}" y="{y-25}" width="80" height="50" class="box"/>',
-        f'<text x="{x-18}" y="{y+5}" class="t">REG</text>',
-        f'<text x="{x+50}" y="{y+5}" class="t">{esc(label)}</text>',
-    ]
-
-
-def draw_sensor(parts: list[str], x: int, y: int, label: str) -> None:
-    parts += [
-        f'<circle cx="{x}" cy="{y}" r="10" class="box"/>',
-        f'<line x1="{x}" y1="{y+10}" x2="{x}" y2="{y+30}" class="line"/>',
-        f'<text x="{x+18}" y="{y+5}" class="t">{esc(label)}</text>',
-    ]
-
-
-def draw_coil(parts: list[str], x: int, y: int, label: str) -> None:
-    parts += [
-        f'<line x1="{x}" y1="{y-25}" x2="{x}" y2="{y-10}" class="line"/>',
-        f'<rect x="{x-16}" y="{y-10}" width="32" height="20" class="box"/>',
-        f'<line x1="{x}" y1="{y+10}" x2="{x}" y2="{y+25}" class="line"/>',
-        f'<text x="{x+25}" y="{y+5}" class="t">{esc(label)}</text>',
-        f'<text x="{x+2}" y="{y-15}" class="ts">A1</text>',
-        f'<text x="{x+2}" y="{y+22}" class="ts">A2</text>',
-    ]
-
-
-def draw_no_contact(parts: list[str], x: int, y: int, label: str) -> None:
-    parts += [
-        f'<line x1="{x-35}" y1="{y}" x2="{x-10}" y2="{y}" class="line"/>',
-        f'<line x1="{x+10}" y1="{y}" x2="{x+35}" y2="{y}" class="line"/>',
-        f'<line x1="{x-10}" y1="{y-14}" x2="{x+10}" y2="{y+14}" class="line"/>',
-        f'<text x="{x+45}" y="{y+5}" class="t">{esc(label)}</text>',
-    ]
-
-
-def draw_terminal(parts: list[str], x: int, y: int, label: str) -> None:
-    parts += [
-        f'<line x1="{x}" y1="{y-15}" x2="{x}" y2="{y+15}" class="line"/>',
-        f'<circle cx="{x}" cy="{y}" r="4" class="box"/>',
-        f'<text x="{x+10}" y="{y+5}" class="t">{esc(label)}</text>',
-    ]
-
-
-def line(parts: list[str], x1: int, y1: int, x2: int, y2: int) -> None:
-    parts.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" class="line"/>')
+def line(parts: list[str], x1: int, y1: int, x2: int, y2: int, klass: str = "line") -> None:
+    parts.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" class="{klass}"/>')
 
 
 def text(parts: list[str], x: int, y: int, value: str, klass: str = "t") -> None:
     parts.append(f'<text x="{x}" y="{y}" class="{klass}">{esc(value)}</text>')
 
 
-def render_svg(svg_code: str, height: int = 900) -> None:
+def rect(parts: list[str], x: int, y: int, w: int, h: int, klass: str = "box") -> None:
+    parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" class="{klass}"/>')
+
+
+def circle(parts: list[str], x: int, y: int, r: int, klass: str = "box") -> None:
+    parts.append(f'<circle cx="{x}" cy="{y}" r="{r}" class="{klass}"/>')
+
+
+def draw_page(parts: list[str], width: int, height: int, title: str) -> None:
+    top = 50
+    bottom = height - 80
+    left = 40
+    right = width - 40
+
+    rect(parts, left, top, right - left, bottom - top, "box")
+    text(parts, 50, 35, title, "tb")
+
+    col_w = (right - left) / 10
+    for i in range(1, 10):
+        x = left + i * col_w
+        line(parts, int(x), top, int(x), bottom, "thin")
+        text(parts, int(x - col_w / 2), top - 10, str(i - 1), "ts")
+
+    row_h = (bottom - top) / 8
+    for i in range(1, 8):
+        y = top + i * row_h
+        line(parts, left, int(y), right, int(y), "thin")
+
+    for i, letter in enumerate("ABCDEFGH"):
+        text(parts, 20, int(top + i * row_h + 18), letter, "ts")
+
+    # cartouche
+    rect(parts, 20, height - 55, width - 40, 35, "box")
+    text(parts, 30, height - 32, title.replace("Folio ", ""), "t")
+
+
+# =========================
+# SYMBOLES ELECTRIQUES
+# =========================
+
+def draw_motor(parts: list[str], x: int, y: int, label: str) -> None:
+    circle(parts, x, y, 18)
+    text(parts, x - 6, y + 5, "M", "t")
+    text(parts, x + 28, y + 5, label, "t")
+
+
+def draw_breaker_3p(parts: list[str], x: int, y: int, label: str) -> None:
+    for i in range(3):
+        xx = x + i * 18
+        line(parts, xx, y - 30, xx, y - 8)
+        line(parts, xx - 6, y - 8, xx + 6, y + 8)
+        line(parts, xx, y + 8, xx, y + 30)
+    text(parts, x + 70, y + 5, label, "t")
+
+
+def draw_contactor_3p(parts: list[str], x: int, y: int, label: str) -> None:
+    for i in range(3):
+        xx = x + i * 18
+        line(parts, xx, y - 28, xx, y - 6)
+        line(parts, xx - 7, y - 6, xx, y + 8)
+        line(parts, xx, y + 8, xx, y + 28)
+    text(parts, x + 70, y + 5, label, "t")
+
+
+def draw_power_supply(parts: list[str], x: int, y: int, label: str) -> None:
+    rect(parts, x - 18, y - 18, 36, 36)
+    text(parts, x - 12, y + 5, "PS", "t")
+    text(parts, x + 28, y + 5, label, "t")
+
+
+def draw_valve_actuator(parts: list[str], x: int, y: int, label: str) -> None:
+    rect(parts, x - 16, y - 16, 32, 32)
+    line(parts, x, y + 16, x, y + 38)
+    parts.append(f'<polygon points="{x-12},{y+38} {x+12},{y+38} {x},{y+52}" class="box"/>')
+    text(parts, x + 26, y + 5, label, "t")
+
+
+def draw_controller(parts: list[str], x: int, y: int, label: str) -> None:
+    rect(parts, x - 35, y - 20, 70, 40)
+    text(parts, x - 16, y + 5, "REG", "t")
+    text(parts, x + 45, y + 5, label, "t")
+
+
+def draw_sensor(parts: list[str], x: int, y: int, label: str) -> None:
+    circle(parts, x, y, 8)
+    line(parts, x, y + 8, x, y + 26)
+    text(parts, x + 14, y + 5, label, "t")
+
+
+def draw_coil(parts: list[str], x: int, y: int, label: str) -> None:
+    line(parts, x, y - 20, x, y - 10)
+    rect(parts, x - 15, y - 10, 30, 20)
+    line(parts, x, y + 10, x, y + 20)
+    text(parts, x + 24, y + 5, label, "t")
+    text(parts, x + 2, y - 14, "A1", "ts")
+    text(parts, x + 2, y + 22, "A2", "ts")
+
+
+def draw_contact_no(parts: list[str], x: int, y: int, label: str) -> None:
+    line(parts, x - 32, y, x - 8, y)
+    line(parts, x + 8, y, x + 32, y)
+    line(parts, x - 8, y - 12, x + 8, y + 12)
+    text(parts, x + 40, y + 5, label, "t")
+
+
+def draw_contact_nc(parts: list[str], x: int, y: int, label: str) -> None:
+    line(parts, x - 32, y, x - 8, y)
+    line(parts, x + 8, y, x + 32, y)
+    line(parts, x - 8, y - 12, x + 8, y + 12)
+    line(parts, x - 8, y + 12, x + 8, y - 12)
+    text(parts, x + 40, y + 5, label, "t")
+
+
+def draw_terminal(parts: list[str], x: int, y: int, label: str) -> None:
+    line(parts, x, y - 12, x, y + 12)
+    circle(parts, x, y, 4)
+    text(parts, x + 10, y + 5, label, "t")
+
+
+def render_svg(svg_code: str, height: int) -> None:
     components.html(svg_code, height=height, scrolling=True)
 
+
+# =========================
+# FOLIO PUISSANCE
+# =========================
 
 def build_power_svg(data: dict) -> str:
     width, height = 1400, 900
     parts = svg_header(width, height)
+    draw_page(parts, width, height, "Folio puissance")
 
-    draw_page_grid(parts, width, height)
-    text(parts, 50, 35, "Folio puissance", "tb")
-
-    # Rails puissance
-    line(parts, 90, 90, 90, 700)
-    line(parts, 220, 90, 220, 700)
-    line(parts, 350, 90, 350, 700)
-    text(parts, 78, 82, "L1", "t")
-    text(parts, 208, 82, "L2", "t")
-    text(parts, 338, 82, "L3", "t")
-
-    y_breaker = 170
-    y_contactor = 310
-    y_load = 500
-
-    if data["has_pump"] or data["has_fan"] or data["has_3way_valve"]:
-        draw_breaker_3p(parts, 90, y_breaker, "QF1")
+    # colonnes pompes
+    x1, x2, x3 = 90, 150, 210
+    for xx, name in [(x1, "L1"), (x2, "L2"), (x3, "L3")]:
+        line(parts, xx, 90, xx, 700, "rail")
+        text(parts, xx - 10, 80, name, "ts")
 
     if data["has_pump"]:
-        draw_contactor_power_3p(parts, 90, y_contactor, "KM1")
-        draw_motor(parts, 90, y_load, "M1 Pompe")
-        line(parts, 90, y_breaker + 35, 90, y_contactor - 35)
-        line(parts, 112, y_breaker + 35, 112, y_contactor - 35)
-        line(parts, 134, y_breaker + 35, 134, y_contactor - 35)
-        line(parts, 90, y_contactor + 35, 90, y_load - 20)
-        line(parts, 112, y_contactor + 35, 112, y_load - 20)
-        line(parts, 134, y_contactor + 35, 134, y_load - 20)
+        draw_breaker_3p(parts, 90, 170, "QF1")
+        draw_contactor_3p(parts, 90, 300, "KM1")
+        draw_motor(parts, 90, 490, "M1 Pompe")
+
+        for xx in [90, 108, 126]:
+            line(parts, xx, 200, xx, 272)
+            line(parts, xx, 328, xx, 470)
 
     if data["has_fan"]:
-        xoff = 420
-        draw_breaker_3p(parts, xoff, y_breaker, "QF2")
-        draw_motor(parts, xoff, y_load, "M2 Ventilation")
-        line(parts, xoff, y_breaker + 35, xoff, y_load - 20)
-        line(parts, xoff + 22, y_breaker + 35, xoff + 22, y_load - 20)
-        line(parts, xoff + 44, y_breaker + 35, xoff + 44, y_load - 20)
+        xf = 420
+        for i, name in enumerate(["L1", "L2", "L3"]):
+            xx = xf + i * 60
+            line(parts, xx, 90, xx, 700, "rail")
+            if i == 0:
+                text(parts, xx - 10, 80, "L1", "ts")
+        draw_breaker_3p(parts, xf, 170, "QF2")
+        draw_motor(parts, xf, 490, "M2 Ventilation")
+        for xx in [xf, xf + 18, xf + 36]:
+            line(parts, xx, 200, xx, 470)
 
     if data["has_3way_valve"]:
-        draw_power_supply(parts, 820, 250, "PS1")
-        draw_valve_actuator(parts, 820, 420, "YV1 Vanne 3 voies")
-        line(parts, 820, 270, 820, 402)
+        draw_power_supply(parts, 900, 240, "PS1")
+        draw_valve_actuator(parts, 900, 420, "YV1 Vanne 3 voies")
+        line(parts, 900, 258, 900, 404)
 
-    if data["has_evaporator"]:
-        text(parts, 1040, 500, "Charge hydraulique / batterie / aérotherme", "t")
-        parts.append('<rect x="1000" y="460" width="300" height="60" class="box"/>')
-
-    draw_title_block(parts, width, height, "Puissance")
+    text(parts, 1020, 470, "Actionneur vanne", "ts")
     return svg_footer(parts)
 
+
+# =========================
+# FOLIO COMMANDE
+# =========================
 
 def build_control_svg(data: dict) -> str:
     width, height = 1600, 900
     parts = svg_header(width, height)
+    draw_page(parts, width, height, "Folio commande")
 
-    draw_page_grid(parts, width, height)
-    text(parts, 50, 35, "Folio commande", "tb")
+    xL = 100
+    xN = 1500
 
-    # Rails commande
-    x_phase = 100
-    x_neutral = 1500
-    line(parts, x_phase, 80, x_phase, 800)
-    line(parts, x_neutral, 80, x_neutral, 800)
-    text(parts, x_phase - 20, 70, "L", "t")
-    text(parts, x_neutral - 10, 70, "N", "t")
+    line(parts, xL, 90, xL, 780, "rail")
+    line(parts, xN, 90, xN, 780, "rail")
+    text(parts, xL - 14, 78, "L", "t")
+    text(parts, xN - 10, 78, "N", "t")
 
-    # Ligne 1 : commande pompe
-    y = 200
+    # RANG 1 : POMPE
+    y1 = 190
     if data["has_pump"]:
-        line(parts, x_phase, y, 200, y)
-        draw_no_contact(parts, 300, y, "Regulation pompe")
-        line(parts, 335, y, 1100, y)
-        draw_coil(parts, 1200, y, "KM1")
-        line(parts, 1200, y + 25, 1200, y + 60)
-        line(parts, 1200, y + 60, x_neutral, y + 60)
-        line(parts, x_neutral, y + 60, x_neutral, y)
+        line(parts, xL, y1, 210, y1)
+        if data["has_defrost"]:
+            draw_contact_nc(parts, 290, y1, "DEG NF")
+            line(parts, 322, y1, 390, y1)
+        else:
+            line(parts, 210, y1, 390, y1)
 
-    # Ligne 2 : dégivrage
-    if data["has_defrost"]:
-        y = 350
-        line(parts, x_phase, y, 200, y)
-        draw_no_contact(parts, 300, y, "Arret degivrage")
-        line(parts, 335, y, 1100, y)
-        draw_coil(parts, 1200, y, "KM1")
-        line(parts, 1200, y + 25, 1200, y + 60)
-        line(parts, 1200, y + 60, x_neutral, y + 60)
-        line(parts, x_neutral, y + 60, x_neutral, y)
+        draw_contact_no(parts, 470, y1, "REG demande pompe")
+        line(parts, 502, y1, 1180, y1)
+        draw_coil(parts, 1250, y1, "KM1")
+        line(parts, 1250, y1 + 20, 1250, y1 + 50)
+        line(parts, 1250, y1 + 50, xN, y1 + 50)
+        line(parts, xN, y1 + 50, xN, y1)
 
-    # Régulateur au milieu
-    if data["has_controller"]:
-        draw_controller(parts, 800, 550, "A1 Regulateur")
+    # RANG 2 : VENTILATION PERMANENTE
+    y2 = 320
+    if data["has_fan"]:
+        line(parts, xL, y2, 1180, y2)
+        draw_coil(parts, 1250, y2, "KV1")
+        line(parts, 1250, y2 + 20, 1250, y2 + 50)
+        line(parts, 1250, y2 + 50, xN, y2 + 50)
+        line(parts, xN, y2 + 50, xN, y2)
+        text(parts, 300, y2 - 12, "Ventilation permanente", "ts")
 
-    # Sondes
+    # RANG 3 : INFORMATIONS REGULATION
+    draw_controller(parts, 820, 520, "A1")
+
     if data["has_temp_sensor"]:
-        draw_sensor(parts, 500, 480, "TT1 Entree")
-        draw_sensor(parts, 500, 620, "TT2 Reprise")
-        line(parts, 510, 510, 760, 550)
-        line(parts, 510, 650, 760, 550)
+        draw_sensor(parts, 500, 460, "TT1 Entree")
+        draw_sensor(parts, 500, 590, "TT2 Reprise")
+        # petits chemins orthogonaux
+        line(parts, 500, 486, 500, 520)
+        line(parts, 500, 520, 785, 520)
+        line(parts, 500, 616, 500, 550)
+        line(parts, 500, 550, 785, 550)
 
-    # Sortie 0-10V vers vanne
     if data["has_3way_valve"]:
-        draw_terminal(parts, 1200, 500, "AO+")
-        draw_terminal(parts, 1250, 500, "AO-")
-        text(parts, 1300, 505, "0-10V vers YV1", "t")
-        if data["has_controller"]:
-            line(parts, 840, 540, 1200, 500)
-            line(parts, 840, 560, 1250, 500)
+        draw_terminal(parts, 1180, 500, "AO+")
+        draw_terminal(parts, 1230, 500, "AO-")
+        line(parts, 855, 505, 1180, 505)
+        line(parts, 855, 535, 1230, 535)
+        text(parts, 1280, 505, "0-10V vers YV1", "t")
 
-    # Infos
+    # Texte technique
+    yy = 680
     if data["setpoint"]:
-        text(parts, 750, 520, f"Consigne : {data['setpoint']}", "ts")
+        text(parts, 760, yy, f"Consigne : {data['setpoint']}", "ts")
+        yy += 20
     if data["pump_on"]:
-        text(parts, 750, 680, f"Marche : {data['pump_on']}", "ts")
+        text(parts, 760, yy, f"Marche pompe : {data['pump_on']}", "ts")
+        yy += 20
     if data["pump_off"]:
-        text(parts, 750, 700, f"Arret : {data['pump_off']}", "ts")
+        text(parts, 760, yy, f"Arret pompe : {data['pump_off']}", "ts")
+        yy += 20
     if data["differential"]:
-        text(parts, 750, 720, f"Diff : {data['differential']}", "ts")
+        text(parts, 760, yy, f"Differenciel : {data['differential']}", "ts")
 
-    draw_title_block(parts, width, height, "Commande")
     return svg_footer(parts)
 
+
+# =========================
+# RESUME
+# =========================
 
 def build_summary_text(data: dict) -> str:
     lines = []
@@ -377,8 +375,12 @@ def build_summary_text(data: dict) -> str:
     return "\n".join(lines) if lines else "Aucun équipement reconnu."
 
 
-st.title("Générateur de schéma électrique conventionnel V6.1")
-st.caption("Analyse fonctionnelle vers folio puissance et folio commande.")
+# =========================
+# UI
+# =========================
+
+st.title("Générateur de schéma électrique conventionnel V7")
+st.caption("Sortie visée : schéma puissance + commande de style industriel simplifié.")
 
 default_text = """Un contrôleur de boucle, associé à une sonde de température du retour ou de la reprise, permet de moduler l’ouverture d’une vanne 3 voies motorisée en fonction de la température mesurée à l’entrée frigorifère.
 La pompe de circulation, à débit fixe, alimente le circuit en eau glycolée froide.
@@ -414,4 +416,4 @@ if st.button("Générer le schéma électrique"):
 
     with tab3:
         st.subheader("Schéma commande")
-        render_svg(control_svg, height=920)
+        render_svg(control_svg, height=820)
