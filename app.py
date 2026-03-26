@@ -63,33 +63,29 @@ st.subheader("Folio puissance")
 if st.button("Afficher folio puissance"):
 
     svg = """
-<svg width="800" height="500" xmlns="http://www.w3.org/2000/svg">
+    <svg width="800" height="500" xmlns="http://www.w3.org/2000/svg">
 
-<!-- Lignes -->
-<line x1="80" y1="50" x2="80" y2="420" stroke="white" stroke-width="3"/>
-<text x="70" y="40" fill="white">L</text>
+    <line x1="80" y1="50" x2="80" y2="420" stroke="white" stroke-width="3"/>
+    <text x="70" y="40" fill="white">L</text>
 
-<line x1="160" y1="50" x2="160" y2="420" stroke="white" stroke-width="3"/>
-<text x="150" y="40" fill="white">N</text>
+    <line x1="160" y1="50" x2="160" y2="420" stroke="white" stroke-width="3"/>
+    <text x="150" y="40" fill="white">N</text>
 
-<!-- Disjoncteur Q1 -->
-<rect x="80" y="120" width="80" height="50" stroke="white" fill="none"/>
-<text x="105" y="150" fill="white">Q1</text>
+    <rect x="80" y="120" width="80" height="50" stroke="white" fill="none"/>
+    <text x="105" y="150" fill="white">Q1</text>
 
-<!-- Protection moteur -->
-<rect x="80" y="190" width="80" height="50" stroke="white" fill="none"/>
-<text x="90" y="220" fill="white">DM1</text>
+    <rect x="80" y="190" width="80" height="50" stroke="white" fill="none"/>
+    <text x="90" y="220" fill="white">DM1</text>
 
-<!-- Contacteur KM1 -->
-<rect x="80" y="260" width="80" height="50" stroke="white" fill="none"/>
-<text x="95" y="290" fill="white">KM1</text>
+    <rect x="80" y="260" width="80" height="50" stroke="white" fill="none"/>
+    <text x="95" y="290" fill="white">KM1</text>
 
-<!-- Lignes vers moteur -->
-<line x1="120" y1="310" x2="120" y2="350" stroke="white" stroke-width="3"/>
+    <line x1="120" y1="310" x2="120" y2="350" stroke="white" stroke-width="3"/>
 
-<!-- Moteur -->
-<circle cx="120" cy="390" r="30" stroke="white" fill="none"/>
-<text x="110" y="395" fill="white">M</text>
+    <circle cx="120" cy="390" r="30" stroke="white" fill="none"/>
+    <text x="110" y="395" fill="white">M</text>
 
-</svg>
-"""
+    </svg>
+    """
+
+    st.components.v1.html(svg, height=520)
