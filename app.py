@@ -63,76 +63,85 @@ st.subheader("Folio puissance")
 if st.button("Afficher folio puissance"):
 
     svg = """
-<svg width="1000" height="600" xmlns="http://www.w3.org/2000/svg">
+<svg width="1100" height="650" xmlns="http://www.w3.org/2000/svg">
 
 <!-- CADRE -->
-<rect x="10" y="10" width="980" height="580" stroke="white" fill="none"/>
+<rect x="10" y="10" width="1080" height="630" stroke="white" fill="none"/>
 
 <!-- TITRE -->
 <text x="30" y="40" fill="white" font-size="20">FOLIO PUISSANCE</text>
 
+<!-- BARRE HORIZONTALE ALIM -->
+<line x1="100" y1="80" x2="1000" y2="80" stroke="white" stroke-width="3"/>
+
 <!-- ===== DÉPART POMPE ===== -->
+<text x="180" y="110" fill="white">Pompe</text>
 
-<!-- Barres -->
-<line x1="150" y1="80" x2="150" y2="500" stroke="white" stroke-width="4"/>
-<text x="140" y="70" fill="white">L</text>
+<!-- L N -->
+<line x1="180" y1="120" x2="180" y2="520" stroke="white" stroke-width="4"/>
+<line x1="260" y1="120" x2="260" y2="520" stroke="white" stroke-width="4"/>
 
-<line x1="250" y1="80" x2="250" y2="500" stroke="white" stroke-width="4"/>
-<text x="240" y="70" fill="white">N</text>
+<text x="170" y="110" fill="white">L</text>
+<text x="250" y="110" fill="white">N</text>
 
-<!-- Titre départ -->
-<text x="160" y="100" fill="white">Pompe</text>
+<!-- Liaison haut -->
+<line x1="180" y1="80" x2="180" y2="120" stroke="white"/>
+<line x1="260" y1="80" x2="260" y2="120" stroke="white"/>
 
 <!-- Q1 -->
-<rect x="150" y="120" width="100" height="50" stroke="white" fill="none"/>
-<text x="185" y="150" fill="white">Q1</text>
+<rect x="180" y="150" width="80" height="40" stroke="white" fill="none"/>
+<text x="205" y="175" fill="white">Q1</text>
 
 <!-- DM1 -->
-<rect x="150" y="190" width="100" height="50" stroke="white" fill="none"/>
-<text x="175" y="220" fill="white">DM1</text>
+<rect x="180" y="210" width="80" height="40" stroke="white" fill="none"/>
+<text x="195" y="235" fill="white">DM1</text>
 
 <!-- KM1 -->
-<rect x="150" y="260" width="100" height="50" stroke="white" fill="none"/>
-<text x="170" y="290" fill="white">KM1</text>
+<rect x="180" y="270" width="80" height="40" stroke="white" fill="none"/>
+<text x="195" y="295" fill="white">KM1</text>
 
-<!-- Liaison -->
-<line x1="200" y1="310" x2="200" y2="360" stroke="white" stroke-width="3"/>
+<!-- descente -->
+<line x1="220" y1="310" x2="220" y2="360" stroke="white" stroke-width="3"/>
 
-<!-- Moteur -->
-<circle cx="200" cy="420" r="35" stroke="white" fill="none"/>
-<text x="190" y="425" fill="white">M</text>
+<!-- moteur -->
+<circle cx="220" cy="420" r="35" stroke="white" fill="none"/>
+<text x="210" y="425" fill="white">M</text>
 
-<!-- ===== DÉPART VENTILATION ===== -->
 
-<!-- Barres -->
-<line x1="450" y1="80" x2="450" y2="500" stroke="white" stroke-width="4"/>
-<text x="440" y="70" fill="white">L</text>
+<!-- ===== DÉPART VENTIL ===== -->
+<text x="500" y="110" fill="white">Ventilation</text>
 
-<line x1="550" y1="80" x2="550" y2="500" stroke="white" stroke-width="4"/>
-<text x="540" y="70" fill="white">N</text>
+<!-- L N -->
+<line x1="500" y1="120" x2="500" y2="520" stroke="white" stroke-width="4"/>
+<line x1="580" y1="120" x2="580" y2="520" stroke="white" stroke-width="4"/>
 
-<!-- Titre -->
-<text x="450" y="100" fill="white">Ventilation</text>
+<text x="490" y="110" fill="white">L</text>
+<text x="570" y="110" fill="white">N</text>
+
+<!-- Liaison haut -->
+<line x1="500" y1="80" x2="500" y2="120" stroke="white"/>
+<line x1="580" y1="80" x2="580" y2="120" stroke="white"/>
 
 <!-- Q2 -->
-<rect x="450" y="120" width="100" height="50" stroke="white" fill="none"/>
-<text x="485" y="150" fill="white">Q2</text>
+<rect x="500" y="150" width="80" height="40" stroke="white" fill="none"/>
+<text x="525" y="175" fill="white">Q2</text>
 
 <!-- KM2 -->
-<rect x="450" y="200" width="100" height="50" stroke="white" fill="none"/>
-<text x="480" y="230" fill="white">KM2</text>
+<rect x="500" y="230" width="80" height="40" stroke="white" fill="none"/>
+<text x="520" y="255" fill="white">KM2</text>
 
-<!-- Liaison -->
-<line x1="500" y1="250" x2="500" y2="300" stroke="white" stroke-width="3"/>
+<!-- descente -->
+<line x1="540" y1="270" x2="540" y2="320" stroke="white" stroke-width="3"/>
 
-<!-- Moteur ventil -->
-<circle cx="500" cy="350" r="30" stroke="white" fill="none"/>
-<text x="490" y="355" fill="white">V</text>
+<!-- ventil -->
+<circle cx="540" cy="370" r="30" stroke="white" fill="none"/>
+<text x="530" y="375" fill="white">V</text>
+
 
 <!-- ===== CARTOUCHE ===== -->
-<rect x="10" y="520" width="980" height="70" stroke="white" fill="none"/>
-<text x="30" y="550" fill="white">Coffret type froid mono-ventil</text>
-<text x="780" y="550" fill="white">Folio : 10</text>
+<rect x="10" y="560" width="1080" height="70" stroke="white" fill="none"/>
+<text x="30" y="600" fill="white">Coffret froid mono-ventil</text>
+<text x="900" y="600" fill="white">Folio : 10</text>
 
 </svg>
 """
