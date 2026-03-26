@@ -4,7 +4,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 st.set_page_config(
-    page_title="Coffret type froid - rendu pro figé",
+    page_title="Coffret type froid - rendu BE",
     layout="wide"
 )
 
@@ -75,6 +75,7 @@ def parse_analysis(text: str) -> dict:
             "dm1": "DM1",
             "q2": "Q2",
             "km1": "KM1",
+            "km1_aux": "KM1 13-14",
             "t1": "T1",
             "a1": "A1 MPX PRO",
             "dt1": "DT1",
@@ -112,7 +113,6 @@ def svg_header(width: int, height: int) -> list[str]:
         ".rail{stroke:#111; stroke-width:3; fill:none;}",
         ".thin{stroke:#bdbdbd; stroke-width:1; fill:none; stroke-dasharray:4 4;}",
         ".box{stroke:#111; stroke-width:1.6; fill:#fff;}",
-        ".fillbox{stroke:#111; stroke-width:1.6; fill:#fff;}",
         "</style>",
     ]
 
@@ -166,7 +166,6 @@ def draw_sheet(parts: list[str], width: int, height: int, project_title: str, sh
     for i, letter in enumerate("ABCDEFGH"):
         text(parts, 18, int(top + i * row_h + 16), letter, "tiny")
 
-    # Cartouche simplifié
     cart_y = height - 70
     rect(parts, 20, cart_y, width - 40, 40, "box")
     line(parts, width - 250, cart_y, width - 250, cart_y + 40)
@@ -186,7 +185,7 @@ def draw_breaker_3p(parts: list[str], x: int, y: int, label: str) -> None:
         line(parts, xx, y - 28, xx, y - 8)
         line(parts, xx - 6, y - 8, xx + 6, y + 8)
         line(parts, xx, y + 8, xx, y + 28)
-    text(parts, x + 60, y + 4, label, "text")
+    text(parts, x + 58, y + 4, label, "text")
 
 
 def draw_switch_3p(parts: list[str], x: int, y: int, label: str) -> None:
@@ -194,7 +193,7 @@ def draw_switch_3p(parts: list[str], x: int, y: int, label: str) -> None:
         xx = x + i * 18
         line(parts, xx, y - 28, xx, y + 28)
         line(parts, xx - 6, y - 10, xx + 6, y + 10)
-    text(parts, x + 60, y + 4, label, "text")
+    text(parts, x + 58, y + 4, label, "text")
 
 
 def draw_contactor_3p(parts: list[str], x: int, y: int, label: str) -> None:
@@ -203,7 +202,7 @@ def draw_contactor_3p(parts: list[str], x: int, y: int, label: str) -> None:
         line(parts, xx, y - 26, xx, y - 6)
         line(parts, xx - 8, y - 6, xx, y + 8)
         line(parts, xx, y + 8, xx, y + 26)
-    text(parts, x + 60, y + 4, label, "text")
+    text(parts, x + 58, y + 4, label, "text")
 
 
 def draw_transformer(parts: list[str], x: int, y: int, label: str) -> None:
@@ -215,12 +214,12 @@ def draw_transformer(parts: list[str], x: int, y: int, label: str) -> None:
 def draw_motor(parts: list[str], x: int, y: int, label: str) -> None:
     circle(parts, x, y, 18)
     text(parts, x - 6, y + 5, "M", "text")
-    text(parts, x + 28, y + 5, label, "text")
+    text(parts, x + 26, y + 5, label, "text")
 
 
 def draw_controller(parts: list[str], x: int, y: int, w: int, h: int, label: str) -> None:
     rect(parts, x, y, w, h, "box")
-    text(parts, x + 10, y + 22, label, "bold")
+    text(parts, x + 10, y + 20, label, "bold")
 
 
 def draw_sensor(parts: list[str], x: int, y: int, label: str) -> None:
@@ -248,7 +247,7 @@ def draw_coil(parts: list[str], x: int, y: int, label: str) -> None:
     line(parts, x, y - 18, x, y - 10)
     rect(parts, x - 16, y - 10, 32, 20, "box")
     line(parts, x, y + 10, x, y + 18)
-    text(parts, x + 24, y + 4, label, "text")
+    text(parts, x + 22, y + 4, label, "text")
     text(parts, x + 2, y - 14, "A1", "tiny")
     text(parts, x + 2, y + 22, "A2", "tiny")
 
@@ -260,7 +259,7 @@ def draw_terminal(parts: list[str], x: int, y: int, label: str) -> None:
 
 
 # =========================================================
-# FOLIOS FIGÉS
+# FOLIOS
 # =========================================================
 
 def build_power_svg(data: dict) -> str:
@@ -270,55 +269,51 @@ def build_power_svg(data: dict) -> str:
 
     r = data["refs"]
 
-    # Départ pompe
     x0 = 90
     for idx, xx in enumerate([x0, x0 + 40, x0 + 80], start=1):
         line(parts, xx, 95, xx, 720, "rail")
         text(parts, xx - 8, 82, f"L{idx}", "tiny")
 
-    draw_switch_3p(parts, x0, 150, r["ig1"])
-    draw_breaker_3p(parts, x0, 240, r["q1"])
-    draw_breaker_3p(parts, x0, 340, r["dm1"])
-    draw_breaker_3p(parts, x0, 450, r["q2"])
-    draw_contactor_3p(parts, x0, 560, r["km1"])
-    draw_motor(parts, x0, 670, r["m1"])
+    draw_switch_3p(parts, x0, 145, r["ig1"])
+    draw_breaker_3p(parts, x0, 225, r["q1"])
+    draw_breaker_3p(parts, x0, 310, r["dm1"])
+    draw_breaker_3p(parts, x0, 400, r["q2"])
+    draw_contactor_3p(parts, x0, 505, r["km1"])
+    draw_motor(parts, x0, 625, r["m1"])
 
     for xx in [x0, x0 + 18, x0 + 36]:
-        line(parts, xx, 178, xx, 212)
-        line(parts, xx, 268, xx, 312)
-        line(parts, xx, 368, xx, 422)
-        line(parts, xx, 478, xx, 534)
-        line(parts, xx, 586, xx, 652)
+        line(parts, xx, 173, xx, 197)
+        line(parts, xx, 253, xx, 282)
+        line(parts, xx, 338, xx, 372)
+        line(parts, xx, 428, xx, 479)
+        line(parts, xx, 531, xx, 607)
 
-    # Départ ventilation
     if data["has_fan"]:
-        xf = 420
+        xf = 380
         line(parts, xf, 95, xf, 720, "rail")
         line(parts, xf + 40, 95, xf + 40, 720, "rail")
         text(parts, xf - 6, 82, "L", "tiny")
         text(parts, xf + 32, 82, "N", "tiny")
-        draw_breaker_3p(parts, xf, 240, "QF Vent")
-        draw_motor(parts, xf, 670, r["m2"])
-        line(parts, xf, 268, xf, 652)
-        line(parts, xf + 18, 268, xf + 18, 652)
+        draw_breaker_3p(parts, xf, 225, "QF Vent")
+        draw_motor(parts, xf, 625, r["m2"])
+        line(parts, xf, 253, xf, 607)
+        line(parts, xf + 18, 253, xf + 18, 607)
 
-    # Transformateur commande
-    draw_transformer(parts, 760, 240, r["t1"])
-    line(parts, 730, 180, 730, 228)
-    line(parts, 790, 180, 790, 228)
-    text(parts, 710, 165, "230V/24V", "tiny")
+    draw_transformer(parts, 720, 230, r["t1"])
+    line(parts, 690, 180, 690, 218)
+    line(parts, 750, 180, 750, 218)
+    text(parts, 672, 165, "230V/24V", "tiny")
 
-    # Alim actionneur vanne
     if data["has_3way_valve"]:
-        rect(parts, 1090, 225, 40, 34, "box")
-        text(parts, 1098, 247, "PS", "text")
-        text(parts, 1145, 247, r["ps1"], "text")
+        rect(parts, 1040, 215, 40, 34, "box")
+        text(parts, 1048, 237, "PS", "text")
+        text(parts, 1095, 237, r["ps1"], "text")
 
-        rect(parts, 1094, 430, 32, 32, "box")
-        line(parts, 1110, 462, 1110, 490)
-        poly(parts, [(1098, 490), (1122, 490), (1110, 505)], "box")
-        text(parts, 1140, 448, r["yv1"], "text")
-        line(parts, 1110, 259, 1110, 430)
+        rect(parts, 1044, 395, 32, 32, "box")
+        line(parts, 1060, 427, 1060, 455)
+        poly(parts, [(1048, 455), (1072, 455), (1060, 470)], "box")
+        text(parts, 1090, 413, r["yv1"], "text")
+        line(parts, 1060, 249, 1060, 395)
 
     return svg_footer(parts)
 
@@ -332,47 +327,70 @@ def build_command_svg(data: dict) -> str:
 
     xL = 100
     xN = 1500
-    line(parts, xL, 80, xL, 800, "rail")
-    line(parts, xN, 80, xN, 800, "rail")
-    text(parts, xL - 14, 70, "L", "bold")
-    text(parts, xN - 10, 70, "N", "bold")
+    line(parts, xL, 90, xL, 790, "rail")
+    line(parts, xN, 90, xN, 790, "rail")
+    text(parts, xL - 14, 80, "L", "bold")
+    text(parts, xN - 10, 80, "N", "bold")
 
-    # Rung pompe
-    y1 = 190
-    line(parts, xL, y1, xN, y1)
+    # Rang 1 pompe avec auto-maintien
+    y1 = 180
+    line(parts, xL, y1, 220, y1)
+
     if data["has_defrost"]:
-        draw_contact_nc(parts, 250, y1, "DEG")
-    draw_contact_no(parts, 430, y1, "REG")
-    draw_coil(parts, 1350, y1, r["km1"])
+        draw_contact_nc(parts, 270, y1, "DEG")
+        line(parts, 304, y1, 360, y1)
+    else:
+        line(parts, 220, y1, 360, y1)
 
-    # Rung ventilation
+    draw_contact_no(parts, 420, y1, "REG")
+    line(parts, 454, y1, 1180, y1)
+
+    draw_coil(parts, 1320, y1, r["km1"])
+    line(parts, 1180, y1, 1304, y1)
+    line(parts, 1336, y1, xN, y1)
+
+    # Pont auto-maintien
+    line(parts, 360, y1 - 42, 360, y1)
+    line(parts, 1180, y1 - 42, 1180, y1)
+    line(parts, 360, y1 - 42, 520, y1 - 42)
+    draw_contact_no(parts, 570, y1 - 42, r["km1_aux"])
+    line(parts, 604, y1 - 42, 1180, y1 - 42)
+
+    # Rang 2 ventilation
     if data["has_fan"]:
-        y2 = 290
-        line(parts, xL, y2, xN, y2)
-        draw_coil(parts, 1350, y2, r["kv1"])
-        text(parts, 320, y2 - 12, "Ventilation permanente", "tiny")
+        y2 = 285
+        line(parts, xL, y2, 1200, y2)
+        draw_coil(parts, 1320, y2, r["kv1"])
+        line(parts, 1200, y2, 1304, y2)
+        line(parts, 1336, y2, xN, y2)
+        text(parts, 300, y2 - 10, "Ventilation permanente", "tiny")
 
-    # Bloc régulateur
-    y3 = 500
-    draw_controller(parts, 680, y3 - 55, 170, 110, r["a1"])
+    # Bloc régulateur centré
+    rx, ry, rw, rh = 640, 430, 210, 120
+    draw_controller(parts, rx, ry, rw, rh, r["a1"])
 
     if data["has_temp_sensor"]:
-        draw_sensor(parts, 500, y3 - 35, r["tt1"])
-        draw_sensor(parts, 500, y3 + 35, r["tt2"])
-        line(parts, 520, y3 - 35, 680, y3 - 35)
-        line(parts, 520, y3 + 35, 680, y3 + 35)
+        draw_sensor(parts, 470, 455, r["tt1"])
+        draw_sensor(parts, 470, 520, r["tt2"])
+        line(parts, 490, 455, rx, 455)
+        line(parts, 490, 520, rx, 520)
+
+    # Sorties du régulateur
+    text(parts, rx + 15, ry + 52, "Entrées sondes", "small")
+    text(parts, rx + 15, ry + 72, "Sorties relais / AO", "small")
 
     if data["has_3way_valve"]:
-        draw_terminal(parts, 980, y3 - 5, "AO+")
-        draw_terminal(parts, 1070, y3 - 5, "AO-")
-        line(parts, 850, y3 - 5, 980, y3 - 5)
-        line(parts, 850, y3 + 25, 1070, y3 + 25)
-        text(parts, 1120, y3, "0-10V vers YV1", "text")
+        draw_terminal(parts, 980, 470, "AO+")
+        draw_terminal(parts, 1060, 470, "AO-")
+        line(parts, rx + rw, 470, 980, 470)
+        line(parts, rx + rw, 500, 1060, 500)
+        text(parts, 1110, 474, "0-10V vers YV1", "text")
 
-    text(parts, 680, 690, f'Consigne : {data["setpoint"]}', "text")
-    text(parts, 680, 712, f'Marche pompe : {data["pump_on"]}', "text")
-    text(parts, 680, 734, f'Arrêt pompe : {data["pump_off"]}', "text")
-    text(parts, 680, 756, f'Différentiel : {data["differential"]}', "text")
+    # Légende BE
+    text(parts, 640, 655, f'Consigne : {data["setpoint"]}', "text")
+    text(parts, 640, 677, f'Marche pompe : {data["pump_on"]}', "text")
+    text(parts, 640, 699, f'Arrêt pompe : {data["pump_off"]}', "text")
+    text(parts, 640, 721, f'Différentiel : {data["differential"]}', "text")
 
     return svg_footer(parts)
 
@@ -386,8 +404,7 @@ def build_terminal_svg(data: dict) -> str:
     text(parts, 90, 130, f'Bornier {r["x1"]}', "bold")
 
     x = 90
-    y = 170
-    row_h = 48
+    y = 165
 
     rect(parts, x, y, 1180, 34, "box")
     line(parts, x + 140, y, x + 140, y + 34)
@@ -408,13 +425,13 @@ def build_terminal_svg(data: dict) -> str:
     ]
 
     for i, row in enumerate(rows):
-        yy = y + 48 + i * row_h
-        rect(parts, x, yy, 1180, 30, "box")
-        line(parts, x + 140, yy, x + 140, yy + 30)
-        line(parts, x + 620, yy, x + 620, yy + 30)
-        text(parts, x + 25, yy + 20, row[0], "text")
-        text(parts, x + 170, yy + 20, row[1], "text")
-        text(parts, x + 670, yy + 20, row[2], "text")
+        yy = y + 44 + i * 36
+        rect(parts, x, yy, 1180, 28, "box")
+        line(parts, x + 140, yy, x + 140, yy + 28)
+        line(parts, x + 620, yy, x + 620, yy + 28)
+        text(parts, x + 25, yy + 18, row[0], "text")
+        text(parts, x + 170, yy + 18, row[1], "text")
+        text(parts, x + 670, yy + 18, row[2], "text")
 
     return svg_footer(parts)
 
@@ -433,6 +450,7 @@ def build_bom_svg(data: dict) -> str:
         ("KV1", "Relais ventilation", "1"),
         ("T1", "Transformateur alimentation commande", "1"),
         ("A1", "Régulateur MPX PRO", "1"),
+        ("DT1", "Module interface régulation", "1"),
         ("X1", "Bornier extérieur", "1"),
         ("YV1", "Actionneur vanne 3 voies 0-10V", "1"),
         ("TT1", "Sonde entrée batterie", "1"),
@@ -449,13 +467,13 @@ def build_bom_svg(data: dict) -> str:
     text(parts, x + 980, y + 22, "Qté", "bold")
 
     for i, item in enumerate(items):
-        yy = y + 44 + i * 36
-        rect(parts, x, yy, 1180, 28, "box")
-        line(parts, x + 180, yy, x + 180, yy + 28)
-        line(parts, x + 930, yy, x + 930, yy + 28)
-        text(parts, x + 20, yy + 18, item[0], "text")
-        text(parts, x + 210, yy + 18, item[1], "text")
-        text(parts, x + 990, yy + 18, item[2], "text")
+        yy = y + 42 + i * 31
+        rect(parts, x, yy, 1180, 25, "box")
+        line(parts, x + 180, yy, x + 180, yy + 25)
+        line(parts, x + 930, yy, x + 930, yy + 25)
+        text(parts, x + 20, yy + 17, item[0], "text")
+        text(parts, x + 210, yy + 17, item[1], "text")
+        text(parts, x + 990, yy + 17, item[2], "text")
 
     return svg_footer(parts)
 
@@ -490,7 +508,7 @@ def build_summary_text(data: dict) -> str:
 
 
 st.title("Générateur de dossier électrique - coffret type froid")
-st.caption("Version figée sur un seul coffret type.")
+st.caption("Rendu bureau d’étude figé sur un coffret type.")
 
 default_text = """Un contrôleur de boucle, associé à une sonde de température du retour ou de la reprise, permet de moduler l’ouverture d’une vanne 3 voies motorisée en fonction de la température mesurée à l’entrée frigorifère.
 La pompe de circulation, à débit fixe, alimente le circuit en eau glycolée froide.
