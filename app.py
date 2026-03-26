@@ -4,7 +4,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 
-st.set_page_config(page_title="Generateur de schema electrique V6", layout="wide")
+st.set_page_config(page_title="Generateur de schema electrique V6.1", layout="wide")
 
 
 def has_any(text: str, patterns: list[str]) -> bool:
@@ -71,18 +71,17 @@ def esc(s: str) -> str:
 
 def svg_header(width: int, height: int) -> list[str]:
     return [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 {width} {height}" '
-        f'style="background:#ffffff">',
-        '<style>',
-        '.t{font:14px Arial, sans-serif; fill:#111;}',
-        '.ts{font:12px Arial, sans-serif; fill:#111;}',
-        '.tb{font:700 18px Arial, sans-serif; fill:#111;}',
-        '.line{stroke:#111; stroke-width:2; fill:none;}',
-        '.thin{stroke:#111; stroke-width:1.2; fill:none;}',
-        '.box{stroke:#111; stroke-width:2; fill:#fff;}',
-        '.rail{stroke:#111; stroke-width:3;}',
-        '.guide{stroke:#aaa; stroke-width:1; stroke-dasharray:4 4; fill:none;}',
-        '</style>',
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 {width} {height}" style="background:#ffffff">',
+        "<style>",
+        ".t{font:14px Arial, sans-serif; fill:#111;}",
+        ".ts{font:12px Arial, sans-serif; fill:#111;}",
+        ".tb{font:700 18px Arial, sans-serif; fill:#111;}",
+        ".line{stroke:#111; stroke-width:2; fill:none;}",
+        ".thin{stroke:#111; stroke-width:1.2; fill:none;}",
+        ".box{stroke:#111; stroke-width:2; fill:#fff;}",
+        ".rail{stroke:#111; stroke-width:3;}",
+        ".guide{stroke:#aaa; stroke-width:1; stroke-dasharray:4 4; fill:none;}",
+        "</style>",
     ]
 
 
@@ -109,14 +108,12 @@ def draw_page_grid(parts: list[str], width: int, height: int) -> None:
         f'<rect x="{left}" y="{top}" width="{right-left}" height="{bottom-top}" class="thin"/>'
     ]
 
-    # colonnes
     col_w = (right - left) / 10
     for i in range(1, 10):
         x = left + i * col_w
         parts.append(f'<line x1="{x}" y1="{top}" x2="{x}" y2="{bottom}" class="guide"/>')
         parts.append(f'<text x="{x-col_w/2:.0f}" y="{top-10}" class="ts">{i-1}</text>')
 
-    # lignes
     row_h = (bottom - top) / 8
     letters = list("ABCDEFGH")
     for i in range(1, 8):
@@ -240,7 +237,7 @@ def build_power_svg(data: dict) -> str:
     draw_page_grid(parts, width, height)
     text(parts, 50, 35, "Folio puissance", "tb")
 
-    # rails
+    # Rails puissance
     line(parts, 90, 90, 90, 700)
     line(parts, 220, 90, 220, 700)
     line(parts, 350, 90, 350, 700)
@@ -287,75 +284,71 @@ def build_power_svg(data: dict) -> str:
 
 
 def build_control_svg(data: dict) -> str:
-    width, height = 1600, 1000
+    width, height = 1600, 900
     parts = svg_header(width, height)
 
     draw_page_grid(parts, width, height)
     text(parts, 50, 35, "Folio commande", "tb")
 
-    # rails commande
+    # Rails commande
     x_phase = 100
-    x_neutral = 1450
-    line(parts, x_phase, 90, x_phase, 820)
-    line(parts, x_neutral, 90, x_neutral, 820)
-    text(parts, x_phase - 18, 80, "L", "t")
-    text(parts, x_neutral - 10, 80, "N", "t")
+    x_neutral = 1500
+    line(parts, x_phase, 80, x_phase, 800)
+    line(parts, x_neutral, 80, x_neutral, 800)
+    text(parts, x_phase - 20, 70, "L", "t")
+    text(parts, x_neutral - 10, 70, "N", "t")
 
-    y1 = 180
-    y2 = 340
-    y3 = 520
-    y4 = 700
-
-    # controller
-    if data["has_controller"]:
-        draw_controller(parts, 820, y2, "A1")
-
-    # sensors
-    if data["has_temp_sensor"]:
-        draw_sensor(parts, 420, y1, "TT1 Entrée")
-        draw_sensor(parts, 420, y2, "TT2 Reprise")
-        if data["has_controller"]:
-            line(parts, 430, y1 + 30, 780, y2 - 20)
-            line(parts, 430, y2 + 30, 780, y2 + 20)
-
-    # pump command chain
+    # Ligne 1 : commande pompe
+    y = 200
     if data["has_pump"]:
-        draw_no_contact(parts, 260, y3, "Régulation pompe")
-        draw_coil(parts, 1120, y3, "KM1")
-        line(parts, x_phase, y3, 225, y3)
-        line(parts, 295, y3, 1104, y3)
-        line(parts, 1120, y3 + 25, 1120, y3 + 60)
-        line(parts, 1120, y3 + 60, x_neutral, y3 + 60)
-        line(parts, x_neutral, y3 + 60, x_neutral, y3)
-        if data["has_controller"]:
-            text(parts, 560, y3 - 15, "Commande Marche / Arrêt pompe", "ts")
+        line(parts, x_phase, y, 200, y)
+        draw_no_contact(parts, 300, y, "Regulation pompe")
+        line(parts, 335, y, 1100, y)
+        draw_coil(parts, 1200, y, "KM1")
+        line(parts, 1200, y + 25, 1200, y + 60)
+        line(parts, 1200, y + 60, x_neutral, y + 60)
+        line(parts, x_neutral, y + 60, x_neutral, y)
 
-    # 0-10V valve
-    if data["has_3way_valve"]:
-        draw_terminal(parts, 1120, y2 - 110, "AO+")
-        draw_terminal(parts, 1180, y2 - 110, "AO-")
-        text(parts, 1220, y2 - 105, "Sortie 0-10V vers YV1", "t")
-        if data["has_controller"]:
-            line(parts, 860, y2 - 25, 1120, y2 - 110)
-            line(parts, 860, y2 + 25, 1180, y2 - 110)
-
-    # defrost
+    # Ligne 2 : dégivrage
     if data["has_defrost"]:
-        draw_no_contact(parts, 260, y4, "Cycle dégivrage")
-        line(parts, x_phase, y4, 225, y4)
-        if data["has_controller"]:
-            line(parts, 295, y4, 780, y2 + 60)
-            text(parts, 350, y4 - 15, "Entrée dégivrage", "ts")
+        y = 350
+        line(parts, x_phase, y, 200, y)
+        draw_no_contact(parts, 300, y, "Arret degivrage")
+        line(parts, 335, y, 1100, y)
+        draw_coil(parts, 1200, y, "KM1")
+        line(parts, 1200, y + 25, 1200, y + 60)
+        line(parts, 1200, y + 60, x_neutral, y + 60)
+        line(parts, x_neutral, y + 60, x_neutral, y)
 
-    # labels
+    # Régulateur au milieu
+    if data["has_controller"]:
+        draw_controller(parts, 800, 550, "A1 Regulateur")
+
+    # Sondes
+    if data["has_temp_sensor"]:
+        draw_sensor(parts, 500, 480, "TT1 Entree")
+        draw_sensor(parts, 500, 620, "TT2 Reprise")
+        line(parts, 510, 510, 760, 550)
+        line(parts, 510, 650, 760, 550)
+
+    # Sortie 0-10V vers vanne
+    if data["has_3way_valve"]:
+        draw_terminal(parts, 1200, 500, "AO+")
+        draw_terminal(parts, 1250, 500, "AO-")
+        text(parts, 1300, 505, "0-10V vers YV1", "t")
+        if data["has_controller"]:
+            line(parts, 840, 540, 1200, 500)
+            line(parts, 840, 560, 1250, 500)
+
+    # Infos
     if data["setpoint"]:
-        text(parts, 760, y2 - 60, f"Consigne {data['setpoint']}", "ts")
+        text(parts, 750, 520, f"Consigne : {data['setpoint']}", "ts")
     if data["pump_on"]:
-        text(parts, 760, y3 - 55, f"Marche pompe : {data['pump_on']}", "ts")
+        text(parts, 750, 680, f"Marche : {data['pump_on']}", "ts")
     if data["pump_off"]:
-        text(parts, 760, y3 - 35, f"Arrêt pompe : {data['pump_off']}", "ts")
+        text(parts, 750, 700, f"Arret : {data['pump_off']}", "ts")
     if data["differential"]:
-        text(parts, 760, y3 - 15, f"Différentiel : {data['differential']}", "ts")
+        text(parts, 750, 720, f"Diff : {data['differential']}", "ts")
 
     draw_title_block(parts, width, height, "Commande")
     return svg_footer(parts)
@@ -384,8 +377,8 @@ def build_summary_text(data: dict) -> str:
     return "\n".join(lines) if lines else "Aucun équipement reconnu."
 
 
-st.title("Générateur de schéma électrique conventionnel V6")
-st.caption("Analyse fonctionnelle → schéma puissance + schéma commande en SVG.")
+st.title("Générateur de schéma électrique conventionnel V6.1")
+st.caption("Analyse fonctionnelle vers folio puissance et folio commande.")
 
 default_text = """Un contrôleur de boucle, associé à une sonde de température du retour ou de la reprise, permet de moduler l’ouverture d’une vanne 3 voies motorisée en fonction de la température mesurée à l’entrée frigorifère.
 La pompe de circulation, à débit fixe, alimente le circuit en eau glycolée froide.
