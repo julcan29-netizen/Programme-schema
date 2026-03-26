@@ -57,3 +57,8 @@ st.text(build_summary_text(data))
 # -----------------------
 if st.button("Générer le schéma électrique"):
     st.success("Schéma généré (simulation OK)")
+
+st.subheader("Folio puissance")
+
+if st.button("Afficher folio puissance"):
+    st.write("Schéma puissance (placeholder)")
