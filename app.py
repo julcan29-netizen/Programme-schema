@@ -3,7 +3,7 @@ import html
 import streamlit as st
 import streamlit.components.v1 as components
 
-st.set_page_config(page_title="Générateur de schéma électrique conventionnel V11", layout="wide")
+st.set_page_config(page_title="Générateur de schéma électrique conventionnel", layout="wide")
 
 
 # =========================
@@ -56,15 +56,13 @@ def parse_analysis(text: str) -> dict:
     differential = f"{diff_match.group(2)}K" if diff_match else "2K"
 
     return {
-        "project_title": "COFFRET TYPE MONO VENTIL - TEMPLATE V11",
+        "project_title": "COFFRET TYPE MONO VENTIL",
         "has_controller": _has_any(t, ["contrôleur", "controleur", "régulateur", "regulateur", "mpx"]),
         "has_temp_sensor": _has_any(t, ["sonde", "température", "temperature"]),
         "has_pump": "pompe" in t,
         "has_fan": _has_any(t, ["ventilation", "ventilateur"]),
         "has_3way_valve": _has_any(t, ["vanne 3 voies", "vanne 3 voies modulante", "vanne 3 voies motorisée"]),
         "has_defrost": _has_any(t, ["dégivrage", "degivrage"]),
-        "has_bypass": _has_any(t, ["by-pass", "bypass"]),
-        "has_glycol": _has_any(t, ["glycol", "glycolée", "glycolee"]),
         "setpoint": setpoint or "+4°C",
         "pump_on": pump_on or "+12°C",
         "pump_off": pump_off or "+10°C",
@@ -77,7 +75,6 @@ def parse_analysis(text: str) -> dict:
             "km1": "KM1",
             "t1": "T1",
             "a1": "A1 MPX PRO",
-            "dt1": "DT1",
             "x1": "X1",
             "m1": "M1 Pompe",
             "m2": "M2 Ventilation",
@@ -103,12 +100,11 @@ def svg_header(width: int, height: int) -> list[str]:
         "<style>",
         ".title{font:700 22px Arial,sans-serif; fill:#111;}",
         ".text{font:13px Arial,sans-serif; fill:#111;}",
-        ".small{font:10px Arial,sans-serif; fill:#111;}",
         ".tiny{font:8px Arial,sans-serif; fill:#111;}",
         ".bold{font:700 13px Arial,sans-serif; fill:#111;}",
         ".line{stroke:#111; stroke-width:2; fill:none;}",
         ".rail{stroke:#111; stroke-width:3; fill:none;}",
-        ".thin{stroke:#aaa; stroke-width:1; fill:none; stroke-dasharray:4 4;}",
+        ".thin{stroke:#bbb; stroke-width:1; fill:none; stroke-dasharray:4 4;}",
         ".box{stroke:#111; stroke-width:1.8; fill:#fff;}",
         "</style>",
     ]
@@ -417,7 +413,6 @@ def build_bom_svg(data: dict) -> str:
         ("KM1", "Contacteur pompe", "1"),
         ("T1", "Transformateur alimentation commande", "1"),
         ("A1", "Régulateur MPX PRO", "1"),
-        ("DT1", "Module détente / sortie vanne", "1"),
         ("X1", "Bornier extérieur", "1"),
         ("YV1", "Actionneur vanne 3 voies 0-10V", "1"),
         ("TT1", "Sonde entrée batterie", "1"),
@@ -445,10 +440,6 @@ def build_bom_svg(data: dict) -> str:
     return svg_footer(parts)
 
 
-# =========================
-# UI
-# =========================
-
 def render_svg(svg_code: str, height: int) -> None:
     components.html(svg_code, height=height, scrolling=True)
 
@@ -475,7 +466,7 @@ def build_summary_text(data: dict) -> str:
 
 
 st.title("Générateur de schéma électrique conventionnel V11")
-st.caption("Template métier mono ventil / pompe / vanne 3 voies / régulateur.")
+st.caption("Version sans imports externes.")
 
 default_text = """Un contrôleur de boucle, associé à une sonde de température du retour ou de la reprise, permet de moduler l’ouverture d’une vanne 3 voies motorisée en fonction de la température mesurée à l’entrée frigorifère.
 La pompe de circulation, à débit fixe, alimente le circuit en eau glycolée froide.
@@ -484,7 +475,7 @@ La pompe est commandée par la sonde de reprise :
 • Marche : température ≥ 12 °C
 • Arrêt : température ≤ 10 °C
 • Différentiel : 2 K
-Ventilation permanente, indépendamment du fonctionnement de la pompe et de la vanne.
+Ventilation permanente.
 Mode dégivrage naturel :
 • La pompe de circulation est arrêtée.
 • La vanne 3 voies est placée en by-pass 100 %.
