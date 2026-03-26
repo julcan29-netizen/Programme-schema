@@ -577,4 +577,37 @@ def build_implantation_svg(data: dict) -> str:
     rect(parts, 490, 200, 95, 55, "box")
     text(parts, 520, 233, "DM1", "bold")
 
-    rect(parts, 625, 200, 95,
+    rect(parts, 625, 200, 95, 55, "box")
+    text(parts, 660, 233, "Q2", "bold")
+
+    rect(parts, 760, 200, 95, 55, "box")
+    text(parts, 790, 233, "KM1", "bold")
+
+    rect(parts, 895, 200, 95, 55, "box")
+    text(parts, 930, 233, "T1", "bold")
+
+    rect(parts, 220, 330, 190, 80, "box")
+    text(parts, 275, 365, "A1 MPX PRO", "bold")
+
+    rect(parts, 445, 330, 120, 80, "box")
+    text(parts, 485, 365, "DT1", "bold")
+
+    rect(parts, 610, 330, 120, 80, "box")
+    text(parts, 645, 365, "PS1", "bold")
+
+    rect(parts, 770, 330, 140, 80, "box")
+    text(parts, 810, 365, "KV1", "bold")
+
+    rect(parts, 950, 330, 200, 80, "box")
+    text(parts, 1015, 365, "X1 BORNIER", "bold")
+
+    rect(parts, 220, 500, 180, 120, "box")
+    text(parts, 255, 560, "Réserve", "bold")
+
+    rect(parts, 450, 500, 240, 120, "box")
+    text(parts, 500, 560, "Passage câbles", "bold")
+
+    rect(parts, 760, 500, 280, 120, "box")
+    text(parts, 815, 560, "Zone raccordements terrain", "bold")
+
+    return svg_footer(parts)
