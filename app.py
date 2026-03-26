@@ -63,29 +63,46 @@ st.subheader("Folio puissance")
 if st.button("Afficher folio puissance"):
 
     svg = """
-    <svg width="800" height="500" xmlns="http://www.w3.org/2000/svg">
+<svg width="900" height="600" xmlns="http://www.w3.org/2000/svg">
 
-    <line x1="80" y1="50" x2="80" y2="420" stroke="white" stroke-width="3"/>
-    <text x="70" y="40" fill="white">L</text>
+<!-- ===== CADRE ===== -->
+<rect x="10" y="10" width="880" height="580" stroke="white" fill="none"/>
 
-    <line x1="160" y1="50" x2="160" y2="420" stroke="white" stroke-width="3"/>
-    <text x="150" y="40" fill="white">N</text>
+<!-- ===== TITRE ===== -->
+<text x="30" y="40" fill="white" font-size="20">FOLIO PUISSANCE</text>
 
-    <rect x="80" y="120" width="80" height="50" stroke="white" fill="none"/>
-    <text x="105" y="150" fill="white">Q1</text>
+<!-- ===== BARRES L / N ===== -->
+<line x1="120" y1="80" x2="120" y2="500" stroke="white" stroke-width="4"/>
+<text x="110" y="70" fill="white">L</text>
 
-    <rect x="80" y="190" width="80" height="50" stroke="white" fill="none"/>
-    <text x="90" y="220" fill="white">DM1</text>
+<line x1="220" y1="80" x2="220" y2="500" stroke="white" stroke-width="4"/>
+<text x="210" y="70" fill="white">N</text>
 
-    <rect x="80" y="260" width="80" height="50" stroke="white" fill="none"/>
-    <text x="95" y="290" fill="white">KM1</text>
+<!-- ===== Q1 ===== -->
+<rect x="120" y="120" width="100" height="50" stroke="white" fill="none"/>
+<text x="155" y="150" fill="white">Q1</text>
 
-    <line x1="120" y1="310" x2="120" y2="350" stroke="white" stroke-width="3"/>
+<!-- ===== DM1 ===== -->
+<rect x="120" y="190" width="100" height="50" stroke="white" fill="none"/>
+<text x="145" y="220" fill="white">DM1</text>
 
-    <circle cx="120" cy="390" r="30" stroke="white" fill="none"/>
-    <text x="110" y="395" fill="white">M</text>
+<!-- ===== KM1 ===== -->
+<rect x="120" y="260" width="100" height="50" stroke="white" fill="none"/>
+<text x="140" y="290" fill="white">KM1</text>
 
-    </svg>
-    """
+<!-- ===== LIAISON ===== -->
+<line x1="170" y1="310" x2="170" y2="360" stroke="white" stroke-width="3"/>
+
+<!-- ===== MOTEUR ===== -->
+<circle cx="170" cy="420" r="35" stroke="white" fill="none"/>
+<text x="160" y="425" fill="white">M</text>
+
+<!-- ===== CARTOUCHE BAS ===== -->
+<rect x="10" y="520" width="880" height="70" stroke="white" fill="none"/>
+<text x="30" y="550" fill="white">Coffret type froid mono-ventil</text>
+<text x="700" y="550" fill="white">Folio : 10</text>
+
+</svg>
+"""
 
     st.components.v1.html(svg, height=520)
