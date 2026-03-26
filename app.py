@@ -137,22 +137,117 @@ def svg_power():
 <text x="858" y="178" font-size="10">N</text>
 
 <rect x="836" y="188" width="30" height="18" fill="none" stroke="black" stroke-width="1.3"/>
-<text x="825" y="184" font-size="11">PS1</text>
+def svg_power():
+    return """
+<svg width="1100" height="620" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff">
 
-<line x1="851" y1="206" x2="851" y2="282" stroke="black" stroke-width="1.5"/>
+<rect x="20" y="20" width="1060" height="580" fill="none" stroke="#222" stroke-width="1.5"/>
 
-<rect x="842" y="282" width="18" height="28" fill="none" stroke="black" stroke-width="1.3"/>
-<text x="875" y="300" font-size="12">YV1</text>
-<text x="875" y="316" font-size="11">Vanne 3 voies modulante</text>
+<text x="40" y="48" font-size="22">Folio puissance</text>
+<text x="40" y="78" font-size="12">COFFRET TYPE FROID MONO-VENTIL</text>
 
-<line x1="851" y1="310" x2="851" y2="326" stroke="black" stroke-width="1.5"/>
-<polygon points="845,326 857,326 851,336" fill="none" stroke="black" stroke-width="1.3"/>
+<!-- ===== POMPE ===== -->
+<text x="90" y="110" font-size="11">L1</text>
+<text x="110" y="110" font-size="11">L2</text>
+<text x="130" y="110" font-size="11">L3</text>
+<text x="85" y="130" font-size="12">Pompe</text>
 
-<!-- CARTOUCHE -->
-<rect x="20" y="560" width="1060" height="30" fill="none" stroke="#222" stroke-width="1.5"/>
-<line x1="985" y1="560" x2="985" y2="590" stroke="#222" stroke-width="1.5"/>
+<!-- lignes -->
+<line x1="100" y1="140" x2="100" y2="300" stroke="black" stroke-width="2"/>
+<line x1="120" y1="140" x2="120" y2="300" stroke="black" stroke-width="2"/>
+<line x1="140" y1="140" x2="140" y2="300" stroke="black" stroke-width="2"/>
+
+<!-- IG1 -->
+<text x="155" y="170" font-size="12">IG1</text>
+
+<!-- Q1 -->
+<text x="155" y="210" font-size="12">Q1</text>
+
+<!-- DM1 -->
+<text x="155" y="250" font-size="12">DM1</text>
+
+<!-- KM1 contact -->
+<line x1="100" y1="300" x2="100" y2="320" stroke="black" stroke-width="2"/>
+<line x1="120" y1="300" x2="120" y2="320" stroke="black" stroke-width="2"/>
+<line x1="140" y1="300" x2="140" y2="320" stroke="black" stroke-width="2"/>
+
+<line x1="100" y1="320" x2="110" y2="330" stroke="black"/>
+<line x1="120" y1="320" x2="130" y2="330" stroke="black"/>
+<line x1="140" y1="320" x2="150" y2="330" stroke="black"/>
+<text x="155" y="330" font-size="12">KM1</text>
+
+<!-- liaison moteur -->
+<line x1="100" y1="340" x2="100" y2="370" stroke="black" stroke-width="2"/>
+<line x1="120" y1="340" x2="120" y2="370" stroke="black" stroke-width="2"/>
+<line x1="140" y1="340" x2="140" y2="370" stroke="black" stroke-width="2"/>
+
+<!-- moteur -->
+<circle cx="120" cy="390" r="18" fill="none" stroke="black" stroke-width="1.5"/>
+<text x="114" y="395" font-size="12">M</text>
+<text x="160" y="395" font-size="12">M1 Pompe</text>
+
+<!-- sortie moteur -->
+<line x1="100" y1="408" x2="100" y2="460" stroke="black" stroke-width="2"/>
+<line x1="120" y1="408" x2="120" y2="460" stroke="black" stroke-width="2"/>
+<line x1="140" y1="408" x2="140" y2="460" stroke="black" stroke-width="2"/>
+
+<!-- ===== VENTIL ===== -->
+<text x="320" y="110" font-size="11">L1</text>
+<text x="340" y="110" font-size="11">L2</text>
+<text x="360" y="110" font-size="11">L3</text>
+<text x="310" y="130" font-size="12">Ventilation</text>
+
+<line x1="330" y1="140" x2="330" y2="300" stroke="black" stroke-width="2"/>
+<line x1="350" y1="140" x2="350" y2="300" stroke="black" stroke-width="2"/>
+<line x1="370" y1="140" x2="370" y2="300" stroke="black" stroke-width="2"/>
+
+<text x="390" y="210" font-size="12">Q2</text>
+
+<!-- moteur ventil -->
+<line x1="330" y1="340" x2="330" y2="370" stroke="black" stroke-width="2"/>
+<line x1="350" y1="340" x2="350" y2="370" stroke="black" stroke-width="2"/>
+<line x1="370" y1="340" x2="370" y2="370" stroke="black" stroke-width="2"/>
+
+<circle cx="350" cy="390" r="18" fill="none" stroke="black"/>
+<text x="344" y="395" font-size="12">M</text>
+<text x="390" y="395" font-size="12">M2 Ventil</text>
+
+<!-- ===== TRANSFO ===== -->
+<text x="550" y="110" font-size="12">230V / 24V</text>
+
+<!-- primaire -->
+<line x1="560" y1="140" x2="560" y2="170" stroke="black"/>
+<line x1="590" y1="140" x2="590" y2="170" stroke="black"/>
+
+<!-- symbole -->
+<circle cx="565" cy="190" r="8" fill="none" stroke="black"/>
+<circle cx="585" cy="190" r="8" fill="none" stroke="black"/>
+<circle cx="605" cy="190" r="8" fill="none" stroke="black"/>
+<circle cx="625" cy="190" r="8" fill="none" stroke="black"/>
+<text x="640" y="195" font-size="12">T1</text>
+
+<!-- secondaire -->
+<line x1="605" y1="200" x2="605" y2="240" stroke="black"/>
+<line x1="625" y1="200" x2="625" y2="240" stroke="black"/>
+<text x="630" y="245" font-size="10">24V / N</text>
+
+<!-- ===== VANNE ===== -->
+<text x="820" y="110" font-size="12">Vanne 3 voies</text>
+
+<line x1="830" y1="140" x2="830" y2="180" stroke="black"/>
+<line x1="850" y1="140" x2="850" y2="180" stroke="black"/>
+
+<rect x="825" y="180" width="30" height="20" fill="none" stroke="black"/>
+<text x="860" y="195" font-size="12">PS1</text>
+
+<line x1="840" y1="200" x2="840" y2="260" stroke="black"/>
+
+<rect x="830" y="260" width="20" height="30" fill="none" stroke="black"/>
+<text x="860" y="280" font-size="12">YV1</text>
+
+<!-- cartouche -->
+<rect x="20" y="560" width="1060" height="30" fill="none" stroke="#222"/>
 <text x="30" y="580" font-size="12">Folio puissance</text>
-<text x="1000" y="580" font-size="12">10</text>
 
 </svg>
 """
