@@ -4,7 +4,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Dossier électrique type froid", layout="wide")
-
+st.write("APP OK")
 
 def _has_any(text: str, patterns: list[str]) -> bool:
     return any(p in text for p in patterns)
