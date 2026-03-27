@@ -267,7 +267,7 @@ def draw_motor_chain(dwg, cfg):
     txt(dwg, km_x + 10, m_y - 50, "Brin 1", 7)
     txt(dwg, km_x + 37, m_y - 50, "Brin 2", 7)
 
-    dwg.add(dwg.ellipse(center=(km_x - 60, m_y - 50), r=(24, 8), fill="none", stroke="black", stroke_width=0.8))
+    dwg.add(dwg.ellipse(center=(km_x - 40, m_y - 40), r=(24, 8), fill="none", stroke="black", stroke_width=0.8))
     txt(dwg, km_x - 60, m_y - 47, "P1-2", 7, anchor="middle")
 
     txt(dwg, m_x + 34, m_y - 24, cfg["pump"]["motor_tag"], 11, "bold", "middle")
