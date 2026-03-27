@@ -1,0 +1,41 @@
+{
+  "project_name": "Cuisine centrale",
+  "folio_title": "PUISSANCE",
+
+  "controller": {
+    "enabled": true,
+    "tag": "A1",
+    "label": "Régulateur MXPRO"
+  },
+
+  "transformer": {
+    "enabled": true,
+    "tag": "T1",
+    "label": "Transformateur 230/24V"
+  },
+
+  "power_supply": {
+    "enabled": true,
+    "tag": "PS1",
+    "label": "Alimentation vanne 24V"
+  },
+
+  "pump": {
+    "enabled": true,
+    "motor_tag": "M1",
+    "motor_label": "Circulateur",
+    "protection_tag": "DM1",
+    "contactor_tag": "KM1"
+  },
+
+  "valve": {
+    "enabled": true,
+    "tag": "YV1",
+    "label": "Vanne 3 voies modulante"
+  },
+
+  "terminal_block": {
+    "enabled": true,
+    "tag": "X1"
+  }
+}
