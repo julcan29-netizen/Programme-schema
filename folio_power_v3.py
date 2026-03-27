@@ -12,25 +12,27 @@ Y_L = 115
 Y_N = 150
 Y_PE = 185
 
-# Positions principales
+# Bloc gauche
 X_SRC = 120
 X_Q1 = 260
 X_A1 = 360
 X_T1 = 520
 X_PS1 = 760
 
-X_DM1 = 780
-X_KM1 = 780
-X_M1 = 900
-
 Y_Q1 = 210
 Y_A1 = 340
 Y_T1 = 340
 Y_PS1 = 340
 
-Y_DM1 = 230
-Y_KM1 = 380
-Y_M1 = 520
+# Bloc moteur avec colonne dédiée
+X_COL = 900
+X_DM1 = X_COL
+X_KM1 = X_COL
+X_M1 = X_COL + 120
+
+Y_DM1 = 210
+Y_KM1 = 330
+Y_M1 = 460
 
 
 def load_config() -> dict:
@@ -111,7 +113,6 @@ def draw_frame(dwg, cfg):
 
     txt(dwg, 55, 78, cfg.get("folio_title", "PUISSANCE"), 24, "bold")
 
-    # cartouche
     rect(dwg, 1200, 1015, 520, 55, 0.9)
     line(dwg, 1550, 1015, 1550, 1070, 0.8)
     line(dwg, 1650, 1015, 1650, 1070, 0.8)
@@ -267,8 +268,8 @@ def draw_motor_chain(dwg, cfg):
     txt(dwg, km_x + 10, m_y - 50, "Brin 1", 7)
     txt(dwg, km_x + 37, m_y - 50, "Brin 2", 7)
 
-    dwg.add(dwg.ellipse(center=(km_x - 40, m_y - 40), r=(24, 8), fill="none", stroke="black", stroke_width=0.8))
-    txt(dwg, km_x - 60, m_y - 47, "P1-2", 7, anchor="middle")
+    dwg.add(dwg.ellipse(center=(km_x - 35, m_y - 50), r=(24, 8), fill="none", stroke="black", stroke_width=0.8))
+    txt(dwg, km_x - 35, m_y - 47, "P1-2", 7, anchor="middle")
 
     txt(dwg, m_x + 34, m_y - 24, cfg["pump"]["motor_tag"], 11, "bold", "middle")
     txt(dwg, m_x + 34, m_y - 8, cfg["pump"]["motor_label"], 8, anchor="middle")
@@ -330,14 +331,21 @@ def draw_wires_right(dwg, cfg):
     if not cfg["pump"].get("enabled", False):
         return
 
-    line(dwg, X_DM1 + 15, Y_L, X_DM1 + 15, Y_DM1, 1.0)
-    line(dwg, X_DM1 + 42, Y_L, X_DM1 + 42, Y_DM1, 1.0)
-    line(dwg, X_DM1 + 69, Y_L, X_DM1 + 69, Y_DM1, 1.0)
-    node(dwg, X_DM1 + 15, Y_L)
-    node(dwg, X_DM1 + 42, Y_L)
-    node(dwg, X_DM1 + 69, Y_L)
+    # descente dédiée depuis les barres vers la colonne moteur
+    line(dwg, X_COL - 18, Y_L, X_COL - 18, Y_DM1, 1.0)
+    line(dwg, X_COL + 9, Y_L, X_COL + 9, Y_DM1, 1.0)
+    line(dwg, X_COL + 36, Y_N, X_COL + 36, Y_DM1, 1.0)
 
-    wire_no(dwg, X_DM1 + 74, 242, "10")
+    node(dwg, X_COL - 18, Y_L)
+    node(dwg, X_COL + 9, Y_L)
+    node(dwg, X_COL + 36, Y_N)
+
+    # liaison de la descente vers DM1
+    line(dwg, X_COL - 18, Y_DM1, X_DM1 + 15, Y_DM1, 1.0)
+    line(dwg, X_COL + 9, Y_DM1, X_DM1 + 42, Y_DM1, 1.0)
+    line(dwg, X_COL + 36, Y_DM1, X_DM1 + 69, Y_DM1, 1.0)
+
+    wire_no(dwg, X_DM1 + 74, Y_DM1 + 8, "10")
 
 
 def draw_bottom_feeds(dwg, cfg):
