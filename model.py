@@ -16,19 +16,19 @@ class Device:
 @dataclass
 class Wire:
     wire_id: str
-    from_ref: str          # ex: "Q1:2"
-    to_ref: str            # ex: "DM1:1"
+    from_ref: str
+    to_ref: str
     folio: int
-    potential: Optional[str] = None     # L / N / PE / 24VAC / etc.
-    terminal_block_ref: Optional[str] = None   # ex: "X1.5"
-    cross_ref: Optional[str] = None      # ex: "→ 11 KM1"
-    label: Optional[str] = None          # texte complémentaire éventuel
+    potential: Optional[str] = None
+    terminal_block_ref: Optional[str] = None
+    cross_ref: Optional[str] = None
+    label: Optional[str] = None
 
 
 @dataclass
 class PlacedDevice:
     tag: str
-    x: int
+    column: str
     y: int
 
 
@@ -42,9 +42,6 @@ class Folio:
 
 
 def split_ref(ref: str) -> Tuple[str, str]:
-    """
-    'KM1:2' -> ('KM1', '2')
-    """
     if ":" not in ref:
         raise ValueError(f"Référence borne invalide : {ref}")
     return ref.split(":", 1)
