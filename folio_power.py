@@ -1,112 +1,311 @@
-def svg_power():
-    return """
-<svg width="1200" height="700" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff">
+# folio_power.py
+import svgwrite
+import streamlit as st
 
-  <style>
-    .t{font-family:Arial,Helvetica,sans-serif; fill:#111;}
-    .title{font-size:22px; font-weight:bold;}
-    .sub{font-size:12px;}
-    .txt{font-size:12px;}
-    .tiny{font-size:10px;}
-    .wire{stroke:#111; stroke-width:2; fill:none;}
-    .thin{stroke:#dddddd; stroke-width:1; fill:none; stroke-dasharray:4 4;}
-    .box{stroke:#111; stroke-width:1.4; fill:none;}
-  </style>
+from model import Folio, split_ref
+from reference_case import get_reference_power_folio
+from validators import validate_power_folio
 
-  <!-- Cadre -->
-  <rect x="20" y="20" width="1160" height="660" class="box"/>
 
-  <!-- Titre -->
-  <text x="40" y="50" class="t title">Folio 10 - Puissance</text>
-  <text x="40" y="78" class="t sub">COFFRET TYPE FROID MONO-VENTIL</text>
-  <text x="980" y="78" class="t sub">Schéma de puissance</text>
+PAGE_W = 1400
+PAGE_H = 900
 
-  <!-- Grille -->
-  <g class="thin">
-    <line x1="80" y1="100" x2="80" y2="620"/>
-    <line x1="180" y1="100" x2="180" y2="620"/>
-    <line x1="280" y1="100" x2="280" y2="620"/>
-    <line x1="380" y1="100" x2="380" y2="620"/>
-    <line x1="480" y1="100" x2="480" y2="620"/>
-    <line x1="580" y1="100" x2="580" y2="620"/>
-    <line x1="680" y1="100" x2="680" y2="620"/>
-    <line x1="780" y1="100" x2="780" y2="620"/>
-    <line x1="880" y1="100" x2="880" y2="620"/>
-    <line x1="980" y1="100" x2="980" y2="620"/>
-    <line x1="1080" y1="100" x2="1080" y2="620"/>
+GRID = 20
+TOP_BUS_Y_L = 60
+TOP_BUS_Y_N = 80
+TOP_BUS_Y_PE = 100
 
-    <line x1="40" y1="120" x2="1140" y2="120"/>
-    <line x1="40" y1="220" x2="1140" y2="220"/>
-    <line x1="40" y1="320" x2="1140" y2="320"/>
-    <line x1="40" y1="420" x2="1140" y2="420"/>
-    <line x1="40" y1="520" x2="1140" y2="520"/>
-  </g>
+SYMBOL_W = 90
+SYMBOL_H = 60
 
-  <!-- ===================================================== -->
-  <!-- DEPART CIRCULATEUR -->
-  <!-- ===================================================== -->
-  <text x="95" y="110" class="t tiny">L1</text>
-  <text x="117" y="110" class="t tiny">L2</text>
-  <text x="139" y="110" class="t tiny">L3</text>
-  <text x="84" y="132" class="t txt">M1 Circulateur</text>
 
-  <!-- fils principaux -->
-  <line x1="100" y1="145" x2="100" y2="520" class="wire"/>
-  <line x1="122" y1="145" x2="122" y2="520" class="wire"/>
-  <line x1="144" y1="145" x2="144" y2="520" class="wire"/>
+def snap(v: int) -> int:
+    return round(v / GRID) * GRID
 
-  <!-- repères fils -->
-  <text x="88" y="160" class="t tiny">1</text>
-  <text x="110" y="160" class="t tiny">2</text>
-  <text x="132" y="160" class="t tiny">3</text>
 
-  <!-- IG1 -->
-  <rect x="92" y="170" width="60" height="24" class="box"/>
-  <text x="110" y="186" class="t txt">IG1</text>
+def draw_page_frame(dwg: svgwrite.Drawing, folio: Folio):
+    dwg.add(dwg.rect(insert=(10, 10), size=(PAGE_W - 20, PAGE_H - 20),
+                     fill="white", stroke="black", stroke_width=1))
 
-  <!-- Q1 -->
-  <rect x="92" y="220" width="60" height="24" class="box"/>
-  <text x="114" y="236" class="t txt">Q1</text>
+    dwg.add(dwg.text(f"FOLIO {folio.number}", insert=(1150, 40), font_size="20px", font_weight="bold"))
+    dwg.add(dwg.text(f"{folio.title}", insert=(80, 40), font_size="22px", font_weight="bold"))
 
-  <!-- DM1 -->
-  <rect x="92" y="270" width="60" height="24" class="box"/>
-  <text x="107" y="286" class="t txt">DM1</text>
+    # Cartouche simple
+    dwg.add(dwg.rect(insert=(1000, 780), size=(350, 90), fill="none", stroke="black"))
+    dwg.add(dwg.text("Projet : Cas de référence CVC", insert=(1010, 810), font_size="14px"))
+    dwg.add(dwg.text("Folio : 10 - Puissance", insert=(1010, 835), font_size="14px"))
+    dwg.add(dwg.text("Standard : type industriel", insert=(1010, 860), font_size="14px"))
 
-  <!-- contact puissance KM1 -->
-  <rect x="92" y="330" width="60" height="24" class="box"/>
-  <text x="107" y="346" class="t txt">KM1</text>
-  <text x="165" y="346" class="t tiny">contact puissance</text>
 
-  <!-- renvoi vers commande -->
-  <text x="165" y="364" class="t tiny">→ 11 KM1 A1/A2</text>
+def draw_buses(dwg: svgwrite.Drawing):
+    dwg.add(dwg.line((60, TOP_BUS_Y_L), (1320, TOP_BUS_Y_L), stroke="black", stroke_width=2))
+    dwg.add(dwg.text("L", insert=(30, TOP_BUS_Y_L + 5), font_size="16px", font_weight="bold"))
 
-  <!-- liaisons vers moteur -->
-  <line x1="100" y1="354" x2="100" y2="392" class="wire"/>
-  <line x1="122" y1="354" x2="122" y2="392" class="wire"/>
-  <line x1="144" y1="354" x2="144" y2="392" class="wire"/>
+    dwg.add(dwg.line((60, TOP_BUS_Y_N), (1320, TOP_BUS_Y_N), stroke="black", stroke_width=2))
+    dwg.add(dwg.text("N", insert=(30, TOP_BUS_Y_N + 5), font_size="16px", font_weight="bold"))
 
-  <line x1="100" y1="430" x2="100" y2="520" class="wire"/>
-  <line x1="122" y1="430" x2="122" y2="520" class="wire"/>
-  <line x1="144" y1="430" x2="144" y2="520" class="wire"/>
+    dwg.add(dwg.line((60, TOP_BUS_Y_PE), (1320, TOP_BUS_Y_PE), stroke="black", stroke_width=2))
+    dwg.add(dwg.text("PE", insert=(20, TOP_BUS_Y_PE + 5), font_size="16px", font_weight="bold"))
 
-  <!-- moteur -->
-  <line x1="100" y1="392" x2="110" y2="392" class="wire"/>
-  <line x1="144" y1="392" x2="134" y2="392" class="wire"/>
-  <line x1="100" y1="430" x2="110" y2="430" class="wire"/>
-  <line x1="144" y1="430" x2="134" y2="430" class="wire"/>
 
-  <circle cx="122" cy="411" r="19" class="box"/>
-  <text x="116" y="416" class="t txt">M</text>
-  <text x="165" y="416" class="t txt">M1</text>
+def get_terminal_pos(device_kind: str, x: int, y: int, terminal: str):
+    """
+    Coordonnées standardisées des bornes.
+    """
+    # bornes haut / bas pour appareils verticaux
+    if device_kind in {"breaker", "motor_protection", "contactor_power"}:
+        if terminal == "1":
+            return (x + SYMBOL_W // 2, y)
+        if terminal == "2":
+            return (x + SYMBOL_W // 2, y + SYMBOL_H)
 
-  <!-- ===================================================== -->
-  <!-- ALIMENTATION MXPRO -->
-  <!-- ===================================================== -->
-  <text x="340" y="132" class="t txt">Alimentation A1 MXPRO</text>
-  <text x="350" y="110" class="t tiny">L</text>
-  <text x="372" y="110" class="t tiny">N</text>
+    if device_kind == "transformer":
+        mapping = {
+            "P1": (x + 20, y),
+            "P2": (x + 70, y),
+            "S1": (x + 20, y + SYMBOL_H),
+            "S2": (x + 70, y + SYMBOL_H),
+        }
+        return mapping.get(terminal)
 
-  <line x1="360" y1="145" x2="360" y2="250" class="wire"/>
-  <line x1="382" y1="145" x2="382" y2="250" class="wire"/>
+    if device_kind in {"controller_supply", "power_supply"}:
+        mapping = {
+            "L": (x, y + 15),
+            "N": (x, y + 45),
+            "+24": (x + SYMBOL_W, y + 20),
+            "0V": (x + SYMBOL_W, y + 45),
+        }
+        return mapping.get(terminal)
 
-  <text x="348" y="
+    if device_kind == "terminal_block":
+        try:
+            idx = int(terminal)
+        except ValueError:
+            idx = 1
+        return (x, y + idx * 20)
+
+    if device_kind in {"motor", "valve"}:
+        mapping = {
+            "L": (x, y + 15),
+            "N": (x, y + 35),
+            "PE": (x, y + 55),
+            "24V": (x, y + 20),
+            "0V": (x, y + 45),
+        }
+        return mapping.get(terminal)
+
+    return (x, y)
+
+
+def draw_device_label(dwg, x, y, tag, label):
+    dwg.add(dwg.text(tag, insert=(x, y - 12), font_size="14px", font_weight="bold"))
+    dwg.add(dwg.text(label, insert=(x, y - 2), font_size="11px"))
+
+
+def draw_breaker(dwg, x, y, tag, label):
+    draw_device_label(dwg, x, y, tag, label)
+    dwg.add(dwg.rect((x, y), (SYMBOL_W, SYMBOL_H), fill="none", stroke="black"))
+    dwg.add(dwg.line((x + SYMBOL_W // 2, y + 8), (x + SYMBOL_W // 2, y + SYMBOL_H - 8), stroke="black", stroke_width=2))
+
+
+def draw_motor_protection(dwg, x, y, tag, label):
+    draw_device_label(dwg, x, y, tag, label)
+    dwg.add(dwg.rect((x, y), (SYMBOL_W, SYMBOL_H), fill="none", stroke="black"))
+    dwg.add(dwg.text("DM", insert=(x + 28, y + 35), font_size="18px", font_weight="bold"))
+
+
+def draw_contactor_power(dwg, x, y, tag, label):
+    draw_device_label(dwg, x, y, tag, label)
+    dwg.add(dwg.rect((x, y), (SYMBOL_W, SYMBOL_H), fill="none", stroke="black"))
+    dwg.add(dwg.line((x + 25, y + 15), (x + 25, y + 45), stroke="black"))
+    dwg.add(dwg.line((x + 65, y + 15), (x + 65, y + 45), stroke="black"))
+    dwg.add(dwg.line((x + 25, y + 30), (x + 65, y + 30), stroke="black", stroke_width=2))
+
+
+def draw_transformer(dwg, x, y, tag, label):
+    draw_device_label(dwg, x, y, tag, label)
+    dwg.add(dwg.rect((x, y), (SYMBOL_W, SYMBOL_H), fill="none", stroke="black"))
+    dwg.add(dwg.circle(center=(x + 30, y + 30), r=12, fill="none", stroke="black"))
+    dwg.add(dwg.circle(center=(x + 60, y + 30), r=12, fill="none", stroke="black"))
+
+
+def draw_controller_supply(dwg, x, y, tag, label):
+    draw_device_label(dwg, x, y, tag, label)
+    dwg.add(dwg.rect((x, y), (SYMBOL_W, SYMBOL_H), fill="none", stroke="black"))
+    dwg.add(dwg.text("MXPRO", insert=(x + 12, y + 35), font_size="14px", font_weight="bold"))
+
+
+def draw_power_supply(dwg, x, y, tag, label):
+    draw_device_label(dwg, x, y, tag, label)
+    dwg.add(dwg.rect((x, y), (SYMBOL_W, SYMBOL_H), fill="none", stroke="black"))
+    dwg.add(dwg.text("PS", insert=(x + 32, y + 35), font_size="18px", font_weight="bold"))
+
+
+def draw_terminal_block(dwg, x, y, tag, label, terminals):
+    draw_device_label(dwg, x, y, tag, label)
+    height = max(100, len(terminals) * 20 + 10)
+    dwg.add(dwg.rect((x, y), (70, height), fill="none", stroke="black"))
+    for i, t in enumerate(terminals):
+        ty = y + 20 + i * 20
+        dwg.add(dwg.line((x, ty), (x + 70, ty), stroke="black"))
+        dwg.add(dwg.text(t, insert=(x + 8, ty - 5), font_size="11px"))
+
+
+def draw_motor(dwg, x, y, tag, label):
+    draw_device_label(dwg, x, y, tag, label)
+    dwg.add(dwg.circle(center=(x + 40, y + 35), r=30, fill="none", stroke="black"))
+    dwg.add(dwg.text("M", insert=(x + 30, y + 42), font_size="18px", font_weight="bold"))
+
+
+def draw_valve(dwg, x, y, tag, label):
+    draw_device_label(dwg, x, y, tag, label)
+    dwg.add(dwg.rect((x, y), (SYMBOL_W, SYMBOL_H), fill="none", stroke="black"))
+    dwg.add(dwg.text("YV", insert=(x + 28, y + 35), font_size="18px", font_weight="bold"))
+
+
+def draw_device(dwg, device, placed):
+    x, y = placed.x, placed.y
+
+    if device.kind == "breaker":
+        draw_breaker(dwg, x, y, device.tag, device.label)
+    elif device.kind == "motor_protection":
+        draw_motor_protection(dwg, x, y, device.tag, device.label)
+    elif device.kind == "contactor_power":
+        draw_contactor_power(dwg, x, y, device.tag, device.label)
+    elif device.kind == "transformer":
+        draw_transformer(dwg, x, y, device.tag, device.label)
+    elif device.kind == "controller_supply":
+        draw_controller_supply(dwg, x, y, device.tag, device.label)
+    elif device.kind == "power_supply":
+        draw_power_supply(dwg, x, y, device.tag, device.label)
+    elif device.kind == "terminal_block":
+        draw_terminal_block(dwg, x, y, device.tag, device.label, device.terminals)
+    elif device.kind == "motor":
+        draw_motor(dwg, x, y, device.tag, device.label)
+    elif device.kind == "valve":
+        draw_valve(dwg, x, y, device.tag, device.label)
+    else:
+        dwg.add(dwg.rect((x, y), (SYMBOL_W, SYMBOL_H), fill="none", stroke="black"))
+        draw_device_label(dwg, x, y, device.tag, device.label)
+
+
+def get_ref_pos(folio: Folio, ref: str):
+    device_map = {d.tag: d for d in folio.devices}
+
+    if ref == "N:0":
+        return (80, TOP_BUS_Y_N)
+    if ref == "PE:0":
+        return (80, TOP_BUS_Y_PE)
+
+    if ref.startswith("FOLIO"):
+        return None
+
+    tag, terminal = split_ref(ref)
+    dev = device_map[tag]
+    placed = folio.layout[tag]
+    return get_terminal_pos(dev.kind, placed.x, placed.y, terminal)
+
+
+def draw_wire_number(dwg, x, y, wire_id):
+    dwg.add(dwg.text(
+        wire_id,
+        insert=(x + 5, y - 5),
+        font_size="11px",
+        font_weight="bold"
+    ))
+
+
+def draw_cross_ref(dwg, x, y, text):
+    dwg.add(dwg.rect((x, y - 14), (90, 20), fill="white", stroke="black"))
+    dwg.add(dwg.text(text, insert=(x + 4, y), font_size="10px"))
+
+
+def draw_terminal_ref(dwg, x, y, text):
+    dwg.add(dwg.text(text, insert=(x + 6, y + 12), font_size="10px"))
+
+
+def draw_polyline_wire(dwg, p1, p2, wire_id, terminal_block_ref=None):
+    """
+    Liaison orthogonale simple.
+    """
+    x1, y1 = p1
+    x2, y2 = p2
+    mx = snap((x1 + x2) // 2)
+
+    points = [(x1, y1), (mx, y1), (mx, y2), (x2, y2)]
+    dwg.add(dwg.polyline(points=points, fill="none", stroke="black", stroke_width=1.5))
+
+    draw_wire_number(dwg, mx, y1, wire_id)
+
+    if terminal_block_ref:
+        draw_terminal_ref(dwg, mx, y2, terminal_block_ref)
+
+
+def draw_wires(dwg, folio: Folio):
+    for w in folio.wires:
+        p1 = get_ref_pos(folio, w.from_ref)
+        p2 = get_ref_pos(folio, w.to_ref)
+
+        if w.to_ref.startswith("FOLIO") and p1:
+            x, y = p1
+            end = (x + 120, y)
+            draw_polyline_wire(dwg, p1, end, w.wire_id, w.terminal_block_ref)
+            if w.cross_ref:
+                draw_cross_ref(dwg, end[0] + 10, end[1], w.cross_ref)
+            continue
+
+        if p1 and p2:
+            draw_polyline_wire(dwg, p1, p2, w.wire_id, w.terminal_block_ref)
+            if w.cross_ref:
+                mx = snap((p1[0] + p2[0]) // 2)
+                my = p2[1]
+                draw_cross_ref(dwg, mx + 10, my, w.cross_ref)
+
+
+def draw_bus_drops(dwg, folio: Folio):
+    """
+    Liaisons verticales depuis les barres L/N vers certains appareils.
+    """
+    device_map = {d.tag: d for d in folio.devices}
+
+    # Q1 alimenté depuis L
+    q1 = folio.layout["Q1"]
+    q1_top = get_terminal_pos(device_map["Q1"].kind, q1.x, q1.y, "1")
+    dwg.add(dwg.line((q1_top[0], TOP_BUS_Y_L), q1_top, stroke="black", stroke_width=1.5))
+    draw_wire_number(dwg, q1_top[0], TOP_BUS_Y_L, "0")
+
+    # Petite barre N/PE repère côté gauche déjà gérée par refs N:0 et PE:0
+
+
+def render_power_folio_svg() -> str:
+    folio = get_reference_power_folio()
+    errors = validate_power_folio(folio)
+    if errors:
+        raise ValueError("\n".join(errors))
+
+    dwg = svgwrite.Drawing(size=(PAGE_W, PAGE_H))
+    draw_page_frame(dwg, folio)
+    draw_buses(dwg)
+    draw_bus_drops(dwg, folio)
+
+    for d in folio.devices:
+        draw_device(dwg, d, folio.layout[d.tag])
+
+    draw_wires(dwg, folio)
+
+    return dwg.tostring()
+
+
+def render_power_folio_streamlit():
+    st.subheader("Folio 10 - Puissance")
+    folio = get_reference_power_folio()
+    errors = validate_power_folio(folio)
+
+    if errors:
+        st.error("Erreurs de validation")
+        for err in errors:
+            st.write(f"- {err}")
+        return
+
+    svg = render_power_folio_svg()
+    st.components.v1.html(svg, height=920, scrolling=True)
