@@ -17,7 +17,7 @@ X_SRC = 120
 X_Q1 = 260
 X_A1 = 360
 X_T1 = 520
-X_PS1 = 760
+X_PS1 = 650
 
 Y_Q1 = 210
 Y_A1 = 340
@@ -25,10 +25,10 @@ Y_T1 = 340
 Y_PS1 = 340
 
 # Bloc moteur avec colonne dédiée
-X_COL = 900
+X_COL = 750
 X_DM1 = X_COL
 X_KM1 = X_COL
-X_M1 = X_COL + 120
+X_M1 = X_COL + 100
 
 Y_DM1 = 210
 Y_KM1 = 330
