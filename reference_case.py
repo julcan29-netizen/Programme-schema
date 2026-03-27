@@ -47,6 +47,13 @@ def get_reference_power_folio() -> Folio:
             terminals=["1", "2"]
         ),
         Device(
+            tag="X1",
+            kind="terminal_block",
+            label="Bornier terrain",
+            folio=10,
+            terminals=["5", "6", "7", "8"]
+        ),
+        Device(
             tag="M1",
             kind="motor",
             label="Circulateur",
@@ -60,63 +67,56 @@ def get_reference_power_folio() -> Folio:
             folio=10,
             terminals=["24V", "0V"]
         ),
-        Device(
-            tag="X1",
-            kind="terminal_block",
-            label="Bornier terrain",
-            folio=10,
-            terminals=["1", "2", "5", "6", "7", "8"]
-        ),
     ]
 
     wires = [
-        # Alimentation Q1
-        Wire(wire_id="1", from_ref="Q1:2", to_ref="A1:L", folio=10, potential="L"),
-        Wire(wire_id="2", from_ref="N:0", to_ref="A1:N", folio=10, potential="N"),
+        # Q1 -> A1
+        Wire("1", "Q1:2", "A1:L", 10, potential="L"),
+        Wire("2", "N:0", "A1:N", 10, potential="N"),
 
-        # Primaire T1
-        Wire(wire_id="3", from_ref="Q1:2", to_ref="T1:P1", folio=10, potential="L"),
-        Wire(wire_id="4", from_ref="N:0", to_ref="T1:P2", folio=10, potential="N"),
+        # Q1 -> T1 primaire
+        Wire("3", "Q1:2", "T1:P1", 10, potential="L"),
+        Wire("4", "N:0", "T1:P2", 10, potential="N"),
 
-        # Alim PS1
-        Wire(wire_id="5", from_ref="Q1:2", to_ref="PS1:L", folio=10, potential="L"),
-        Wire(wire_id="6", from_ref="N:0", to_ref="PS1:N", folio=10, potential="N"),
+        # Q1 -> PS1
+        Wire("5", "Q1:2", "PS1:L", 10, potential="L"),
+        Wire("6", "N:0", "PS1:N", 10, potential="N"),
 
-        # Vanne YV1 via bornier
-        Wire(wire_id="30", from_ref="PS1:+24", to_ref="X1:7", folio=10, potential="+24", terminal_block_ref="X1.7"),
-        Wire(wire_id="31", from_ref="PS1:0V", to_ref="X1:8", folio=10, potential="0V", terminal_block_ref="X1.8"),
-        Wire(wire_id="32", from_ref="X1:7", to_ref="YV1:24V", folio=10, potential="+24", terminal_block_ref="X1.7"),
-        Wire(wire_id="33", from_ref="X1:8", to_ref="YV1:0V", folio=10, potential="0V", terminal_block_ref="X1.8"),
-        Wire(wire_id="34", from_ref="YV1:24V", to_ref="FOLIO11:AO_YV1", folio=10, cross_ref="→ 11 YV1 AO"),
+        # T1 secondaire -> folio commande
+        Wire("20", "T1:S1", "FOLIO11:T1_24V", 10, potential="24VAC", cross_ref="→ 11 T1"),
+        Wire("21", "T1:S2", "FOLIO11:T1_0V", 10, potential="24VAC", cross_ref="→ 11 T1"),
 
-        # Circulateur M1
-        Wire(wire_id="10", from_ref="Q1:2", to_ref="DM1:1", folio=10, potential="L"),
-        Wire(wire_id="11", from_ref="DM1:2", to_ref="KM1:1", folio=10, potential="L"),
-        Wire(wire_id="12", from_ref="KM1:2", to_ref="X1:5", folio=10, potential="L", terminal_block_ref="X1.5"),
-        Wire(wire_id="13", from_ref="X1:5", to_ref="M1:L", folio=10, potential="L", terminal_block_ref="X1.5"),
-        Wire(wire_id="14", from_ref="N:0", to_ref="X1:6", folio=10, potential="N", terminal_block_ref="X1.6"),
-        Wire(wire_id="15", from_ref="X1:6", to_ref="M1:N", folio=10, potential="N", terminal_block_ref="X1.6"),
-        Wire(wire_id="16", from_ref="PE:0", to_ref="M1:PE", folio=10, potential="PE"),
-        Wire(wire_id="17", from_ref="KM1:1", to_ref="FOLIO11:KM1_COIL", folio=10, cross_ref="→ 11 KM1"),
+        # Départ moteur
+        Wire("10", "Q1:2", "DM1:1", 10, potential="L"),
+        Wire("11", "DM1:2", "KM1:1", 10, potential="L"),
+        Wire("12", "KM1:2", "X1:5", 10, potential="L", terminal_block_ref="X1.5"),
+        Wire("13", "X1:5", "M1:L", 10, potential="L", terminal_block_ref="X1.5"),
+        Wire("14", "N:0", "X1:6", 10, potential="N", terminal_block_ref="X1.6"),
+        Wire("15", "X1:6", "M1:N", 10, potential="N", terminal_block_ref="X1.6"),
+        Wire("16", "PE:0", "M1:PE", 10, potential="PE"),
+        Wire("17", "KM1:1", "FOLIO11:KM1_COIL", 10, potential="L", cross_ref="→ 11 KM1"),
 
-        # Renvoi secondaire T1 vers commande
-        Wire(wire_id="20", from_ref="T1:S1", to_ref="FOLIO11:T1_24V", folio=10, potential="24VAC", cross_ref="→ 11 T1"),
-        Wire(wire_id="21", from_ref="T1:S2", to_ref="FOLIO11:T1_0V", folio=10, potential="24VAC", cross_ref="→ 11 T1"),
+        # Vanne
+        Wire("30", "PS1:+24", "X1:7", 10, potential="+24", terminal_block_ref="X1.7"),
+        Wire("31", "PS1:0V", "X1:8", 10, potential="0V", terminal_block_ref="X1.8"),
+        Wire("32", "X1:7", "YV1:24V", 10, potential="+24", terminal_block_ref="X1.7"),
+        Wire("33", "X1:8", "YV1:0V", 10, potential="0V", terminal_block_ref="X1.8"),
+        Wire("34", "YV1:24V", "FOLIO11:AO_YV1", 10, cross_ref="→ 11 YV1 AO"),
     ]
 
     layout = {
-        "Q1": PlacedDevice(tag="Q1", x=120, y=100),
+        "Q1": PlacedDevice("Q1", "power_in", 150),
 
-        "A1": PlacedDevice(tag="A1", x=120, y=240),
-        "T1": PlacedDevice(tag="T1", x=300, y=240),
-        "PS1": PlacedDevice(tag="PS1", x=480, y=240),
+        "A1": PlacedDevice("A1", "control_power", 260),
+        "T1": PlacedDevice("T1", "transformer", 260),
+        "PS1": PlacedDevice("PS1", "control_power", 420),
 
-        "DM1": PlacedDevice(tag="DM1", x=700, y=220),
-        "KM1": PlacedDevice(tag="KM1", x=700, y=360),
-        "X1": PlacedDevice(tag="X1", x=900, y=360),
-        "M1": PlacedDevice(tag="M1", x=1080, y=360),
+        "DM1": PlacedDevice("DM1", "motor_power", 180),
+        "KM1": PlacedDevice("KM1", "motor_power", 380),
 
-        "YV1": PlacedDevice(tag="YV1", x=900, y=220),
+        "X1": PlacedDevice("X1", "field", 340),
+        "YV1": PlacedDevice("YV1", "field_far", 420),
+        "M1": PlacedDevice("M1", "field_far", 650),
     }
 
     return Folio(
