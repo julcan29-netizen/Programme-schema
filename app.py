@@ -1,6 +1,8 @@
 import streamlit as st
+from folio_power import render_power_folio_streamlit
 
 st.set_page_config(layout="wide")
-st.title("TEST DEPLOIEMENT")
-st.error("VERSION TEST 999")
-st.write("Si tu vois ce message, alors GitHub/Streamlit déploient bien le bon code.")
+
+st.title("Générateur de schémas électriques CVC")
+
+render_power_folio_streamlit()
