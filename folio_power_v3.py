@@ -7,29 +7,31 @@ import svgwrite
 PAGE_W = 1800
 PAGE_H = 1100
 
-# Barres
+# Barres d'alimentation
 Y_L = 115
 Y_N = 150
 Y_PE = 185
 
-# Colonnes principales
-X_SRC = 140
-X_Q1 = 300
-X_T1 = 510
+# Positions principales
+X_SRC = 120
+X_Q1 = 260
+X_A1 = 360
+X_T1 = 520
 X_PS1 = 760
-X_DM1 = 1110
-X_KM1 = 1110
-X_M1 = 1360
-X_A1 = 380
 
-# Niveaux
+X_DM1 = 1100
+X_KM1 = 1100
+X_M1 = 1260
+
 Y_Q1 = 210
-Y_T1 = 330
-Y_PS1 = 330
-Y_DM1 = 210
-Y_KM1 = 500
-Y_M1 = 760
-Y_A1 = 330
+Y_A1 = 340
+Y_T1 = 340
+Y_PS1 = 340
+
+Y_DM1 = 250
+Y_KM1 = 470
+Y_M1 = 700
+
 
 def load_config() -> dict:
     path = Path("config_installation.json")
@@ -38,7 +40,7 @@ def load_config() -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def line(dwg, x1, y1, x2, y2, w=1.4, dash=None):
+def line(dwg, x1, y1, x2, y2, w=1.2, dash=None):
     kwargs = {
         "start": (x1, y1),
         "end": (x2, y2),
@@ -75,29 +77,29 @@ def txt(dwg, x, y, value, size=12, weight="normal", anchor="start"):
     )
 
 
-def node(dwg, x, y, r=2.6):
+def node(dwg, x, y, r=2.4):
     dwg.add(dwg.circle(center=(x, y), r=r, fill="black"))
 
 
 def wire_no(dwg, x, y, value):
-    txt(dwg, x, y, value, 10, "normal")
+    txt(dwg, x, y, value, 9)
 
 
 def xref(dwg, x, y, value):
-    rect(dwg, x, y - 11, 95, 18, 0.8)
-    txt(dwg, x + 5, y + 2, value, 9)
+    rect(dwg, x, y - 11, 90, 18, 0.8)
+    txt(dwg, x + 5, y + 2, value, 8)
 
 
 def terminal_arrow_text(dwg, x, y, top_text, bottom_text=None):
-    txt(dwg, x, y, "◀", 10)
-    txt(dwg, x + 12, y, top_text, 10)
+    txt(dwg, x, y, "◀", 9)
+    txt(dwg, x + 10, y, top_text, 9)
     if bottom_text:
-        txt(dwg, x + 12, y + 18, bottom_text, 10)
+        txt(dwg, x + 10, y + 16, bottom_text, 9)
 
 
 def draw_frame(dwg, cfg):
-    rect(dwg, 10, 10, PAGE_W - 20, PAGE_H - 20, 1.4)
-    rect(dwg, 18, 18, PAGE_W - 36, PAGE_H - 150, 1.0)
+    rect(dwg, 10, 10, PAGE_W - 20, PAGE_H - 20, 1.2)
+    rect(dwg, 18, 18, PAGE_W - 36, PAGE_H - 145, 1.0)
 
     usable = PAGE_W - 36
     cell = usable / 20
@@ -105,48 +107,58 @@ def draw_frame(dwg, cfg):
         xx = 18 + i * cell
         line(dwg, xx, 18, xx, 34, 0.8)
         if i < 20:
-            txt(dwg, xx + cell / 2, 31, i + 1, 9, anchor="middle")
+            txt(dwg, xx + cell / 2, 30, i + 1, 8, anchor="middle")
 
-    txt(dwg, 60, 82, cfg.get("folio_title", "PUISSANCE"), 26, "bold")
+    txt(dwg, 55, 78, cfg.get("folio_title", "PUISSANCE"), 24, "bold")
 
-    rect(dwg, 1180, 1015, 560, 62, 1.0)
-    line(dwg, 1535, 1015, 1535, 1077, 0.8)
-    line(dwg, 1670, 1015, 1670, 1077, 0.8)
-
-    txt(dwg, 1200, 1040, cfg.get("project_name", "Projet"), 12)
-    txt(dwg, 1200, 1061, "FOLIO PUISSANCE", 12)
-    txt(dwg, 1588, 1040, "FOLIO", 9)
-    txt(dwg, 1612, 1066, "10", 22, "bold", "middle")
+    # cartouche
+    rect(dwg, 1200, 1015, 520, 55, 0.9)
+    line(dwg, 1550, 1015, 1550, 1070, 0.8)
+    line(dwg, 1650, 1015, 1650, 1070, 0.8)
+    txt(dwg, 1218, 1037, cfg.get("project_name", "Projet"), 10)
+    txt(dwg, 1218, 1056, "FOLIO PUISSANCE", 10)
+    txt(dwg, 1588, 1037, "FOLIO", 8)
+    txt(dwg, 1605, 1060, "10", 18, "bold", "middle")
 
 
 def draw_buses(dwg):
-    line(dwg, 90, Y_L, 1710, Y_L, 1.8)
-    line(dwg, 90, Y_N, 1710, Y_N, 1.8)
-    line(dwg, 90, Y_PE, 1710, Y_PE, 1.8)
+    line(dwg, 85, Y_L, 1710, Y_L, 1.6)
+    line(dwg, 85, Y_N, 1710, Y_N, 1.6)
+    line(dwg, 85, Y_PE, 1710, Y_PE, 1.6)
 
-    txt(dwg, 58, Y_L + 4, "L", 14, "bold")
-    txt(dwg, 58, Y_N + 4, "N", 14, "bold")
-    txt(dwg, 46, Y_PE + 4, "PE", 14, "bold")
+    txt(dwg, 56, Y_L + 4, "L", 12, "bold")
+    txt(dwg, 56, Y_N + 4, "N", 12, "bold")
+    txt(dwg, 44, Y_PE + 4, "PE", 12, "bold")
 
 
 def draw_source(dwg):
-    rect(dwg, X_SRC - 28, 98, 38, 52, 0.8)
-    txt(dwg, X_SRC - 9, 118, "Ph", 9, anchor="middle")
-    txt(dwg, X_SRC - 9, 140, "N", 9, anchor="middle")
+    rect(dwg, X_SRC - 22, 100, 34, 48, 0.8)
+    txt(dwg, X_SRC - 5, 118, "Ph", 8, anchor="middle")
+    txt(dwg, X_SRC - 5, 138, "N", 8, anchor="middle")
 
 
 def draw_q1(dwg):
     x, y = X_Q1, Y_Q1
-    txt(dwg, x + 18, y - 22, "Q1", 13, "bold", "middle")
-    txt(dwg, x + 18, y - 8, "Disjoncteur général", 9, anchor="middle")
+    txt(dwg, x + 16, y - 18, "Q1", 11, "bold", "middle")
+    txt(dwg, x + 16, y - 5, "Disjoncteur général", 8, anchor="middle")
 
-    line(dwg, x + 18, y, x + 18, y + 18, 1.6)
-    line(dwg, x + 18, y + 18, x + 35, y + 40, 1.6)
-    line(dwg, x + 35, y + 40, x + 18, y + 40, 1.6)
-    line(dwg, x + 18, y + 40, x + 18, y + 95, 1.6)
+    line(dwg, x + 16, y, x + 16, y + 14, 1.4)
+    line(dwg, x + 16, y + 14, x + 30, y + 34, 1.4)
+    line(dwg, x + 30, y + 34, x + 16, y + 34, 1.4)
+    line(dwg, x + 16, y + 34, x + 16, y + 92, 1.4)
 
-    txt(dwg, x + 45, y + 10, "1", 8)
-    txt(dwg, x + 45, y + 84, "2", 8)
+    txt(dwg, x + 36, y + 8, "1", 8)
+    txt(dwg, x + 36, y + 82, "2", 8)
+
+
+def draw_a1(dwg, cfg):
+    if not cfg["controller"].get("enabled", False):
+        return
+    x, y = X_A1, Y_A1
+    txt(dwg, x + 45, y - 18, cfg["controller"]["tag"], 11, "bold", "middle")
+    txt(dwg, x + 45, y - 5, cfg["controller"]["label"], 8, anchor="middle")
+    rect(dwg, x, y, 90, 62, 0.9)
+    txt(dwg, x + 45, y + 38, "MXPRO", 16, "bold", "middle")
 
 
 def draw_t1(dwg, cfg):
@@ -154,82 +166,37 @@ def draw_t1(dwg, cfg):
         return
     x, y = X_T1, Y_T1
 
-    txt(dwg, x + 45, y - 20, cfg["transformer"]["tag"], 13, "bold", "middle")
-    txt(dwg, x + 45, y + 4, "230V", 10, anchor="middle")
-    txt(dwg, x + 45, y + 22, "24V", 10, anchor="middle")
+    txt(dwg, x + 40, y - 18, cfg["transformer"]["tag"], 11, "bold", "middle")
+    txt(dwg, x + 40, y - 2, "Transformateur 230/24V", 8, anchor="middle")
 
-    line(dwg, x + 18, y - 5, x + 18, y + 15, 1.5)
-    line(dwg, x + 68, y - 5, x + 68, y + 15, 1.5)
+    line(dwg, x + 15, y, x + 15, y + 14, 1.3)
+    line(dwg, x + 60, y, x + 60, y + 14, 1.3)
 
-    dwg.add(dwg.circle(center=(x + 32, y + 48), r=17, fill="none", stroke="black", stroke_width=1.1))
-    dwg.add(dwg.circle(center=(x + 56, y + 74), r=17, fill="none", stroke="black", stroke_width=1.1))
+    dwg.add(dwg.circle(center=(x + 28, y + 40), r=13, fill="none", stroke="black", stroke_width=1.0))
+    dwg.add(dwg.circle(center=(x + 50, y + 60), r=13, fill="none", stroke="black", stroke_width=1.0))
 
-    line(dwg, x + 32, y + 91, x + 32, y + 118, 1.5)
-    line(dwg, x + 80, y + 91, x + 80, y + 118, 1.5)
+    line(dwg, x + 28, y + 73, x + 28, y + 97, 1.3)
+    line(dwg, x + 72, y + 73, x + 72, y + 97, 1.3)
 
-    line(dwg, x + 9, y + 83, x + 9, y + 96, 0.9)
-    line(dwg, x + 2, y + 96, x + 16, y + 96, 0.9)
-    line(dwg, x + 4, y + 100, x + 14, y + 100, 0.9)
-    line(dwg, x + 6, y + 104, x + 12, y + 104, 0.9)
+    line(dwg, x + 8, y + 70, x + 8, y + 82, 0.8)
+    line(dwg, x + 2, y + 82, x + 14, y + 82, 0.8)
+    line(dwg, x + 4, y + 86, x + 12, y + 86, 0.8)
+    line(dwg, x + 6, y + 90, x + 10, y + 90, 0.8)
 
-    txt(dwg, x + 8, y - 8, "P1", 8)
-    txt(dwg, x + 58, y - 8, "P2", 8)
-    txt(dwg, x + 26, y + 118, "S1", 8)
-    txt(dwg, x + 74, y + 118, "S2", 8)
-
-
-def draw_controller_feeds(dwg, cfg):
-    if not cfg["controller"].get("enabled", False):
-        return
-
-    x1 = X_Q1 + 18
-    x_n = X_Q1 + 75
-    y_bus_out = Y_Q1 + 95
-    y_drop = 560
-
-    line(dwg, x1, y_bus_out, x1, y_drop, 1.1)
-    line(dwg, x_n, Y_N, x_n, y_drop, 1.1)
-
-    wire_no(dwg, x1 + 6, 470, "1001")
-    wire_no(dwg, x_n + 6, 470, "1002")
-
-    terminal_arrow_text(dwg, x1 - 8, y_drop + 22, f"{cfg['controller']['tag']} PRO1 N")
-    terminal_arrow_text(dwg, x_n - 8, y_drop + 22, f"{cfg['controller']['tag']} PRO1 Ph")
-
-    txt(dwg, (x1 + x_n) / 2, y_drop + 68, "Alim", 10, anchor="middle")
-    txt(dwg, (x1 + x_n) / 2, y_drop + 88, cfg["controller"]["label"], 10, anchor="middle")
-
-
-def draw_valve_feeds(dwg, cfg):
-    if not cfg["power_supply"].get("enabled", False):
-        return
-
-    x24 = X_T1 + 32
-    x0 = X_T1 + 80
-    y_start = Y_T1 + 118
-    y_drop = 560
-
-    line(dwg, x24, y_start, x24, y_drop, 1.1)
-    line(dwg, x0, y_start, x0, y_drop, 1.1)
-
-    wire_no(dwg, x24 + 6, 470, "1003")
-    wire_no(dwg, x0 + 6, 470, "1004")
-
-    terminal_arrow_text(dwg, x24 - 8, y_drop + 22, "X1:7")
-    terminal_arrow_text(dwg, x0 - 8, y_drop + 22, "X1:8")
-
-    txt(dwg, (x24 + x0) / 2, y_drop + 68, "Alimentation", 10, anchor="middle")
-    txt(dwg, (x24 + x0) / 2, y_drop + 88, "Vanne", 10, anchor="middle")
+    txt(dwg, x + 6, y - 6, "P1", 7)
+    txt(dwg, x + 52, y - 6, "P2", 7)
+    txt(dwg, x + 22, y + 98, "S1", 7)
+    txt(dwg, x + 67, y + 98, "S2", 7)
 
 
 def draw_ps1(dwg, cfg):
     if not cfg["power_supply"].get("enabled", False):
         return
     x, y = X_PS1, Y_PS1
-    txt(dwg, x + 40, y - 20, cfg["power_supply"]["tag"], 13, "bold", "middle")
-    txt(dwg, x + 40, y - 4, cfg["power_supply"]["label"], 9, anchor="middle")
-    rect(dwg, x, y + 8, 80, 60, 1.0)
-    txt(dwg, x + 40, y + 45, "PS", 22, "bold", "middle")
+    txt(dwg, x + 36, y - 18, cfg["power_supply"]["tag"], 11, "bold", "middle")
+    txt(dwg, x + 36, y - 5, cfg["power_supply"]["label"], 8, anchor="middle")
+    rect(dwg, x, y + 8, 72, 52, 0.9)
+    txt(dwg, x + 36, y + 40, "PS", 18, "bold", "middle")
 
 
 def draw_dm1(dwg, cfg):
@@ -237,29 +204,29 @@ def draw_dm1(dwg, cfg):
         return
     x, y = X_DM1, Y_DM1
 
-    txt(dwg, x + 50, y - 18, cfg["pump"]["protection_tag"], 13, "bold", "middle")
-    txt(dwg, x + 50, y, "Protection moteur", 9, anchor="middle")
+    txt(dwg, x + 42, y - 16, cfg["pump"]["protection_tag"], 11, "bold", "middle")
+    txt(dwg, x + 42, y - 2, "Protection moteur", 8, anchor="middle")
 
-    line(dwg, x + 18, y, x + 18, y + 18, 1.2)
-    line(dwg, x + 50, y, x + 50, y + 18, 1.2)
-    line(dwg, x + 82, y, x + 82, y + 18, 1.2)
+    line(dwg, x + 15, y, x + 15, y + 16, 1.1)
+    line(dwg, x + 42, y, x + 42, y + 16, 1.1)
+    line(dwg, x + 69, y, x + 69, y + 16, 1.1)
 
-    rect(dwg, x + 8, y + 18, 84, 98, 1.1)
+    rect(dwg, x + 7, y + 16, 70, 76, 1.0)
 
-    line(dwg, x + 18, y + 18, x + 18, y + 98, 1.0)
-    line(dwg, x + 50, y + 18, x + 50, y + 98, 1.0)
-    line(dwg, x + 82, y + 18, x + 82, y + 98, 1.0)
+    line(dwg, x + 15, y + 16, x + 15, y + 82, 0.9)
+    line(dwg, x + 42, y + 16, x + 42, y + 82, 0.9)
+    line(dwg, x + 69, y + 16, x + 69, y + 82, 0.9)
 
-    line(dwg, x + 18, y + 116, x + 18, y + 145, 1.2)
-    line(dwg, x + 50, y + 116, x + 50, y + 145, 1.2)
-    line(dwg, x + 82, y + 116, x + 82, y + 145, 1.2)
+    line(dwg, x + 15, y + 92, x + 15, y + 120, 1.1)
+    line(dwg, x + 42, y + 92, x + 42, y + 120, 1.1)
+    line(dwg, x + 69, y + 92, x + 69, y + 120, 1.1)
 
-    txt(dwg, x + 12, y - 8, "1", 8)
-    txt(dwg, x + 44, y - 8, "3", 8)
-    txt(dwg, x + 76, y - 8, "5", 8)
-    txt(dwg, x + 12, y + 132, "2", 8)
-    txt(dwg, x + 44, y + 132, "4", 8)
-    txt(dwg, x + 76, y + 132, "6", 8)
+    txt(dwg, x + 10, y - 6, "1", 7)
+    txt(dwg, x + 37, y - 6, "3", 7)
+    txt(dwg, x + 64, y - 6, "5", 7)
+    txt(dwg, x + 10, y + 110, "2", 7)
+    txt(dwg, x + 37, y + 110, "4", 7)
+    txt(dwg, x + 64, y + 110, "6", 7)
 
 
 def draw_km1(dwg, cfg):
@@ -267,19 +234,19 @@ def draw_km1(dwg, cfg):
         return
     x, y = X_KM1, Y_KM1
 
-    txt(dwg, x + 50, y - 18, cfg["pump"]["contactor_tag"], 13, "bold", "middle")
-    txt(dwg, x + 50, y, "Contact puissance", 9, anchor="middle")
+    txt(dwg, x + 42, y - 16, cfg["pump"]["contactor_tag"], 11, "bold", "middle")
+    txt(dwg, x + 42, y - 2, "Contact puissance", 8, anchor="middle")
 
-    for xoff, topn, botn in [(18, "1", "2"), (50, "3", "4"), (82, "5", "6")]:
-        line(dwg, x + xoff, y + 10, x + xoff, y + 34, 1.1)
-        line(dwg, x + xoff + 10, y + 38, x + xoff + 10, y + 72, 1.1)
-        line(dwg, x + xoff, y + 34, x + xoff + 10, y + 38, 1.1)
-        txt(dwg, x + xoff - 3, y, topn, 8)
-        txt(dwg, x + xoff + 7, y + 88, botn, 8)
+    for xoff, topn, botn in [(15, "1", "2"), (42, "3", "4"), (69, "5", "6")]:
+        line(dwg, x + xoff, y + 8, x + xoff, y + 28, 1.0)
+        line(dwg, x + xoff + 9, y + 31, x + xoff + 9, y + 58, 1.0)
+        line(dwg, x + xoff, y + 28, x + xoff + 9, y + 31, 1.0)
+        txt(dwg, x + xoff - 2, y - 1, topn, 7)
+        txt(dwg, x + xoff + 5, y + 70, botn, 7)
 
-    line(dwg, x + 18, y + 10, x + 18, y + 150, 0.8, dash=[3, 3])
-    line(dwg, x + 50, y + 10, x + 50, y + 150, 0.8, dash=[3, 3])
-    line(dwg, x + 82, y + 10, x + 82, y + 150, 0.8, dash=[3, 3])
+    line(dwg, x + 15, y + 8, x + 15, y + 115, 0.8, dash=[3, 3])
+    line(dwg, x + 42, y + 8, x + 42, y + 115, 0.8, dash=[3, 3])
+    line(dwg, x + 69, y + 8, x + 69, y + 115, 0.8, dash=[3, 3])
 
 
 def draw_motor_chain(dwg, cfg):
@@ -291,89 +258,124 @@ def draw_motor_chain(dwg, cfg):
     m_x = X_M1
     m_y = Y_M1
 
-    for dm_off, km_off in [(18, 18), (50, 50), (82, 82)]:
-        line(dwg, dm_x + dm_off, Y_DM1 + 145, km_x + km_off, Y_KM1 + 10, 1.1)
+    for dm_off, km_off in [(15, 15), (42, 42), (69, 69)]:
+        line(dwg, dm_x + dm_off, Y_DM1 + 120, km_x + km_off, Y_KM1 + 8, 1.0)
 
-    line(dwg, km_x + 18, Y_KM1 + 72, km_x + 18, m_y - 60, 1.1, dash=[3, 3])
-    line(dwg, km_x + 50, Y_KM1 + 72, km_x + 50, m_y - 60, 1.1, dash=[3, 3])
+    line(dwg, km_x + 15, Y_KM1 + 58, km_x + 15, m_y - 42, 1.0, dash=[3, 3])
+    line(dwg, km_x + 42, Y_KM1 + 58, km_x + 42, m_y - 42, 1.0, dash=[3, 3])
 
-    txt(dwg, km_x + 12, m_y - 74, "Brin 1", 8)
-    txt(dwg, km_x + 44, m_y - 74, "Brin 2", 8)
+    txt(dwg, km_x + 10, m_y - 50, "Brin 1", 7)
+    txt(dwg, km_x + 37, m_y - 50, "Brin 2", 7)
 
-    dwg.add(dwg.ellipse(center=(km_x - 80, m_y - 72), r=(28, 10), fill="none", stroke="black", stroke_width=0.8))
-    txt(dwg, km_x - 80, m_y - 68, "P1-2", 8, anchor="middle")
-    txt(dwg, km_x - 36, m_y - 72, "Brin 1", 8)
-    txt(dwg, km_x - 6, m_y - 72, "Brin 2", 8)
+    dwg.add(dwg.ellipse(center=(km_x - 60, m_y - 50), r=(24, 8), fill="none", stroke="black", stroke_width=0.8))
+    txt(dwg, km_x - 60, m_y - 47, "P1-2", 7, anchor="middle")
 
-    txt(dwg, m_x + 40, m_y - 32, cfg["pump"]["motor_tag"], 13, "bold", "middle")
-    txt(dwg, m_x + 40, m_y - 12, cfg["pump"]["motor_label"], 9, anchor="middle")
-    dwg.add(dwg.circle(center=(m_x + 40, m_y + 10), r=30, fill="none", stroke="black", stroke_width=1.2))
-    txt(dwg, m_x + 40, m_y + 17, "M", 20, "bold", "middle")
-    txt(dwg, m_x - 10, m_y - 5, "U1", 8)
-    txt(dwg, m_x + 22, m_y - 5, "U2", 8)
-    txt(dwg, m_x - 24, m_y + 12, "1~", 9)
-    txt(dwg, m_x - 38, m_y - 18, "145 W", 9)
-    txt(dwg, m_x - 34, m_y - 2, "1.5 A", 9)
+    txt(dwg, m_x + 34, m_y - 24, cfg["pump"]["motor_tag"], 11, "bold", "middle")
+    txt(dwg, m_x + 34, m_y - 8, cfg["pump"]["motor_label"], 8, anchor="middle")
+    dwg.add(dwg.circle(center=(m_x + 34, m_y + 10), r=24, fill="none", stroke="black", stroke_width=1.0))
+    txt(dwg, m_x + 34, m_y + 16, "M", 16, "bold", "middle")
+    txt(dwg, m_x - 6, m_y - 1, "U1", 7)
+    txt(dwg, m_x + 18, m_y - 1, "U2", 7)
+    txt(dwg, m_x - 18, m_y + 12, "1~", 8)
+    txt(dwg, m_x - 30, m_y - 18, "145 W", 7)
+    txt(dwg, m_x - 28, m_y - 4, "1.5 A", 7)
 
-    line(dwg, km_x + 18, m_y - 60, m_x + 10, m_y - 20, 1.1, dash=[3, 3])
-    line(dwg, km_x + 50, m_y - 60, m_x + 42, m_y - 20, 1.1, dash=[3, 3])
+    line(dwg, km_x + 15, m_y - 42, m_x + 2, m_y - 18, 1.0, dash=[3, 3])
+    line(dwg, km_x + 42, m_y - 42, m_x + 26, m_y - 18, 1.0, dash=[3, 3])
 
-    line(dwg, m_x + 70, m_y + 16, m_x + 100, m_y + 16, 1.0)
-    line(dwg, m_x + 100, m_y + 16, m_x + 100, m_y + 28, 1.0)
-    line(dwg, m_x + 88, m_y + 28, m_x + 112, m_y + 28, 1.0)
-    line(dwg, m_x + 92, m_y + 33, m_x + 108, m_y + 33, 1.0)
-    line(dwg, m_x + 96, m_y + 38, m_x + 104, m_y + 38, 1.0)
+    line(dwg, m_x + 58, m_y + 16, m_x + 82, m_y + 16, 0.8)
+    line(dwg, m_x + 82, m_y + 16, m_x + 82, m_y + 26, 0.8)
+    line(dwg, m_x + 72, m_y + 26, m_x + 92, m_y + 26, 0.8)
+    line(dwg, m_x + 75, m_y + 30, m_x + 89, m_y + 30, 0.8)
+    line(dwg, m_x + 78, m_y + 34, m_x + 86, m_y + 34, 0.8)
 
 
 def draw_wires_left(dwg, cfg):
-    qx = X_Q1 + 18
-    qy = Y_Q1 + 95
+    qx = X_Q1 + 16
+    qy = Y_Q1 + 92
 
-    line(dwg, qx, Y_L, qx, Y_Q1, 1.1)
+    line(dwg, qx, Y_L, qx, Y_Q1, 1.0)
     node(dwg, qx, Y_L)
-    wire_no(dwg, qx + 8, Y_L - 3, "0")
+    wire_no(dwg, qx + 6, Y_L - 3, "0")
 
     if cfg["transformer"].get("enabled", False):
-        line(dwg, qx, qy, X_T1 + 18, qy, 1.1)
-        line(dwg, X_T1 + 18, qy, X_T1 + 18, Y_T1 - 5, 1.1)
-        wire_no(dwg, (qx + X_T1 + 18) / 2, qy - 4, "1001")
+        line(dwg, qx, qy, X_T1 + 15, qy, 1.0)
+        line(dwg, X_T1 + 15, qy, X_T1 + 15, Y_T1, 1.0)
+        wire_no(dwg, (qx + X_T1 + 15) / 2, qy - 3, "1001")
 
-    if cfg["transformer"].get("enabled", False):
-        line(dwg, X_T1 + 68, Y_N, X_T1 + 68, Y_T1 - 5, 1.1)
-        node(dwg, X_T1 + 68, Y_N)
-        wire_no(dwg, X_T1 + 74, 260, "1002")
+        line(dwg, X_T1 + 60, Y_N, X_T1 + 60, Y_T1, 1.0)
+        node(dwg, X_T1 + 60, Y_N)
+        wire_no(dwg, X_T1 + 66, 252, "1002")
 
     if cfg["power_supply"].get("enabled", False):
-        line(dwg, qx, qy + 24, X_PS1, qy + 24, 1.1)
-        line(dwg, X_PS1, qy + 24, X_PS1, Y_PS1 + 20, 1.1)
-        wire_no(dwg, (qx + X_PS1) / 2, qy + 20, "5")
+        line(dwg, qx, qy + 18, X_PS1, qy + 18, 1.0)
+        line(dwg, X_PS1, qy + 18, X_PS1, Y_PS1 + 16, 1.0)
+        wire_no(dwg, (qx + X_PS1) / 2, qy + 14, "5")
 
-        line(dwg, X_PS1 + 104, Y_N, X_PS1 + 104, Y_PS1 + 48, 1.1)
-        node(dwg, X_PS1 + 104, Y_N)
-        wire_no(dwg, X_PS1 + 110, 300, "6")
+        line(dwg, X_PS1 + 72, Y_N, X_PS1 + 72, Y_PS1 + 34, 1.0)
+        node(dwg, X_PS1 + 72, Y_N)
+        wire_no(dwg, X_PS1 + 78, 300, "6")
 
     if cfg["controller"].get("enabled", False):
-        line(dwg, qx, qy, X_A1, qy, 1.1)
-        line(dwg, X_A1, qy, X_A1, Y_A1 + 24, 1.1)
-        wire_no(dwg, (qx + X_A1) / 2, qy - 4, "1")
+        line(dwg, qx, qy, X_A1, qy, 1.0)
+        line(dwg, X_A1, qy, X_A1, Y_A1 + 18, 1.0)
+        wire_no(dwg, (qx + X_A1) / 2, qy - 3, "1")
 
-        line(dwg, X_A1 + 110, Y_N, X_A1 + 110, Y_A1 + 48, 1.1)
-        node(dwg, X_A1 + 110, Y_N)
-        wire_no(dwg, X_A1 + 116, 312, "2")
+        line(dwg, X_A1 + 90, Y_N, X_A1 + 90, Y_A1 + 34, 1.0)
+        node(dwg, X_A1 + 90, Y_N)
+        wire_no(dwg, X_A1 + 96, 312, "2")
 
 
 def draw_wires_right(dwg, cfg):
     if not cfg["pump"].get("enabled", False):
         return
 
-    line(dwg, X_DM1 + 18, Y_L, X_DM1 + 18, Y_DM1, 1.1)
-    line(dwg, X_DM1 + 50, Y_L, X_DM1 + 50, Y_DM1, 1.1)
-    line(dwg, X_DM1 + 82, Y_L, X_DM1 + 82, Y_DM1, 1.1)
-    node(dwg, X_DM1 + 18, Y_L)
-    node(dwg, X_DM1 + 50, Y_L)
-    node(dwg, X_DM1 + 82, Y_L)
+    line(dwg, X_DM1 + 15, Y_L, X_DM1 + 15, Y_DM1, 1.0)
+    line(dwg, X_DM1 + 42, Y_L, X_DM1 + 42, Y_DM1, 1.0)
+    line(dwg, X_DM1 + 69, Y_L, X_DM1 + 69, Y_DM1, 1.0)
+    node(dwg, X_DM1 + 15, Y_L)
+    node(dwg, X_DM1 + 42, Y_L)
+    node(dwg, X_DM1 + 69, Y_L)
 
-    wire_no(dwg, X_DM1 + 88, 245, "10")
+    wire_no(dwg, X_DM1 + 74, 242, "10")
+
+
+def draw_bottom_feeds(dwg, cfg):
+    if cfg["controller"].get("enabled", False):
+        x1 = X_Q1 + 16
+        x2 = X_Q1 + 52
+        y_start = Y_Q1 + 92
+        y_drop = 540
+
+        line(dwg, x1, y_start, x1, y_drop, 1.0)
+        line(dwg, x2, Y_N, x2, y_drop, 1.0)
+
+        wire_no(dwg, x1 + 5, 455, "1001")
+        wire_no(dwg, x2 + 5, 455, "1002")
+
+        terminal_arrow_text(dwg, x1 - 6, y_drop + 22, "A1 PRO1 N")
+        terminal_arrow_text(dwg, x2 - 6, y_drop + 22, "A1 PRO1 Ph")
+
+        txt(dwg, (x1 + x2) / 2, y_drop + 60, "Alim", 8, anchor="middle")
+        txt(dwg, (x1 + x2) / 2, y_drop + 77, cfg["controller"]["label"], 8, anchor="middle")
+
+    if cfg["power_supply"].get("enabled", False):
+        x24 = X_T1 + 28
+        x0 = X_T1 + 72
+        y_start = Y_T1 + 97
+        y_drop = 540
+
+        line(dwg, x24, y_start, x24, y_drop, 1.0)
+        line(dwg, x0, y_start, x0, y_drop, 1.0)
+
+        wire_no(dwg, x24 + 5, 468, "1003")
+        wire_no(dwg, x0 + 5, 468, "1004")
+
+        terminal_arrow_text(dwg, x24 - 6, y_drop + 22, "X1:7")
+        terminal_arrow_text(dwg, x0 - 6, y_drop + 22, "X1:8")
+
+        txt(dwg, (x24 + x0) / 2, y_drop + 60, "Alimentation", 8, anchor="middle")
+        txt(dwg, (x24 + x0) / 2, y_drop + 77, "Vanne", 8, anchor="middle")
 
 
 def render_power_folio_streamlit():
@@ -390,15 +392,15 @@ def render_power_folio_streamlit():
     draw_buses(dwg)
     draw_source(dwg)
     draw_q1(dwg)
+    draw_a1(dwg, cfg)
     draw_t1(dwg, cfg)
-    draw_controller_feeds(dwg, cfg)
-    draw_valve_feeds(dwg, cfg)
     draw_ps1(dwg, cfg)
     draw_dm1(dwg, cfg)
     draw_km1(dwg, cfg)
     draw_motor_chain(dwg, cfg)
     draw_wires_left(dwg, cfg)
     draw_wires_right(dwg, cfg)
+    draw_bottom_feeds(dwg, cfg)
 
     html = f"""
     <div style="width:100%;overflow:auto;background:white;border:1px solid #bbb;">
