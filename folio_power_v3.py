@@ -20,6 +20,7 @@ X_PS1 = 760
 X_DM1 = 1110
 X_KM1 = 1110
 X_M1 = 1360
+X_A1 = 380
 
 # Niveaux
 Y_Q1 = 210
@@ -28,7 +29,7 @@ Y_PS1 = 330
 Y_DM1 = 210
 Y_KM1 = 500
 Y_M1 = 760
-
+Y_A1 = 330
 
 def load_config() -> dict:
     path = Path("config_installation.json")
